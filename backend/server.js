@@ -5,6 +5,11 @@ const app = express();
 // Serve static files from React app (to fix later)
 app.use(express.static(path.join(__dirname, '../dist')));
 
+// Sign up
+app.post('api/signup', (req, res) => {
+  const { email, username, password } = req.body;
+});
+
 // API route ex.
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from Express!' });
