@@ -1,23 +1,25 @@
 import { useState, useEffect } from "react";
 import Peer from "peerjs";
 
-const GameComponent = () => {
+import BackLink from "../components/BackLink";
+
+export default function Lobby() {
   const [peer, setPeer] = useState(null);
-  const [gameId, setGameId] = useState("");
+  const [lobbyId, setLobbyId] = useState("");
   const [connection, setConnection] = useState(null);
   const [isHost, setIsHost] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    // Creating Peer instance 
+    // Creating Peer instance
     const newPeer = new Peer();
     setPeer(newPeer);
 
     // Setting up peer ID once peer's initialized
     newPeer.on("open", (id) => {
       console.log("Connected with ID:", id);
-      setGameId(id); // Use as lobby/game ID
+      setLobbyId(id); // Use as lobby/game ID
     });
 
     // Listen for incoming connections!! b09 flashbacks >.<
@@ -40,11 +42,11 @@ const GameComponent = () => {
 
   const hostGame = () => {
     setIsHost(true);
-    console.log("Hosting game with ID:", gameId);
+    console.log("Hosting game with ID:", lobbyId);
   };
 
   const joinGame = () => {
-    const conn = peer.connect(gameId);
+    const conn = peer.connect(lobbyId);
     setConnection(conn);
 
     conn.on("open", () => {
@@ -74,6 +76,7 @@ const GameComponent = () => {
   return (
     <div>
       <h1>{isHost ? "Game Lobby (Host)" : "Join Game"}</h1>
+      <BackLink />
       {!isGameStarted && (
         <div>
           {!isHost ? (
@@ -81,15 +84,15 @@ const GameComponent = () => {
               <input
                 type="text"
                 placeholder="Enter Game ID"
-                value={gameId}
-                onChange={(e) => setGameId(e.target.value)}
+                value={lobbyId}
+                onChange={(e) => setLobbyId(e.target.value)}
               />
               <button onClick={joinGame}>Join Game</button>
               <button onClick={hostGame}>Host Game</button>  
             </>
           ) : (
             <>
-              <p>Share this game ID with another player to join: {gameId}</p>
+              <p>Share this game ID with another player to join: {lobbyId}</p>
               <button onClick={() => setIsGameStarted(true)}>
                 Start Game
               </button>
@@ -112,6 +115,4 @@ const GameComponent = () => {
       )}
     </div>
   );
-};
-
-export default GameComponent;
+}
