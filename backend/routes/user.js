@@ -1,5 +1,5 @@
 import express from "express";
-import db from '../db/connection.js'; // assuming you want to save the user to MongoDB
+import db from '../db/connection.js';
 
 const router = express.Router();
 
@@ -22,13 +22,3 @@ router.post('/', async (req, res) => {
 });
 
 export default router;
-
-
-// // Sign up
-// app.post('/api/signup', (req, res) => {
-//   const { email, username, password } = req.body;
-//   console.log(email, username, password);
-//   //Hash/save user in db
-
-//   res.status(201).json({ message: 'User registered successfully' });
-// });
