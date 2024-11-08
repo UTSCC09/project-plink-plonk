@@ -1,5 +1,3 @@
-import { predictWebcam } from "./mediapipe.mjs";
-
 export {
   generateProblemText,
   generateProblem
