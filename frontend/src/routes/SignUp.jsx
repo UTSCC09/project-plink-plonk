@@ -13,8 +13,9 @@ const SignUp = () => {
 
     // Temporary fetching
     const userData = { email, username, password };
+    const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-    const response = await fetch('http://localhost:3000/api/signup', {
+    const response = await fetch(`${apiUrl}/api/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

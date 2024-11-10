@@ -60,6 +60,7 @@ function Public({setIsLoggedIn}) {
       <Link to={"/signup"}>
         Sign Up
       </Link>
+      
       <Link onClick={logInFake}>
         Log In (fake)
       </Link>

@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(cors());
 
 // Route handling
-app.use("/api/signup", userRoutes);
 app.use("/api/records", recordRoutes);
+app.use("/api/", userRoutes); // for login and signup
 
 // API route ex.
 app.get('/api/hello', (req, res) => {
