@@ -43,6 +43,10 @@ const Login = ({ onLogin }) => {
     }
   };
 
+  const handleSignupClick = () => {
+    navigate("/signup"); // Navigate to signup page
+  };
+
   return (
     <form onSubmit={submit}>
       <h2>Login</h2>
@@ -50,7 +54,7 @@ const Login = ({ onLogin }) => {
       <input type="text" placeholder="Username" value={username} onChange={(e)=>setUsername(e.target.value)} required/>
       <input type="password" placeholder="Password"value={password} onChange={(e)=>setPassword(e.target.value)} required/>
       <button type="submit">Login</button>
-      <button>Signup</button>
+      <button onClick={handleSignupClick}>Signup</button>
     </form>
   );
 };

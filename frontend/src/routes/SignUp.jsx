@@ -16,7 +16,6 @@ const SignUp = () => {
   const submit = async (e) => {
     e.preventDefault();
     console.log({ email, username, password });
-    const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
     const userData = { email, username, password };
     signup(userData, onError, () => {
