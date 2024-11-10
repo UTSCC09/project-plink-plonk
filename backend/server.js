@@ -1,8 +1,11 @@
 import express from 'express';
 import path from 'path';
+import { dirname } from "path";
 import cors from 'cors';
 import userRoutes from './routes/user.js';
 import recordRoutes from './routes/record.js';
+import session from "express-session";
+import { parse, serialize } from "cookie";
 
 const app = express();
 
@@ -10,7 +13,36 @@ const app = express();
 // app.use(express.static(path.join(__dirname, '../dist')));
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND, // Set this to the exact origin of your frontend
+  credentials: true // Allow credentials like cookies to be sent
+}));
+
+app.use(
+  session({
+    secret: "q9j3k8h2j1f9d0s3f9j2k3j1f09d2j3",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
+      maxAge: 1000 * 60 * 60 * 24, // session expiration (1 day in this case)
+    },
+  }),
+);
+
+app.use(function (req, res, next) {
+  const cookies = parse(req.headers.cookie || "");
+  req.username = req.session.username ? req.session.username : null;
+  console.log(
+    "HTTP request",
+    req.session.username,
+    req.method,
+    req.url,
+    req.body
+  );
+  next();
+});
 
 // Route handling
 app.use("/api/records", recordRoutes);
