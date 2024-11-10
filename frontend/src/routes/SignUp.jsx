@@ -19,13 +19,15 @@ const SignUp = () => {
 
     const userData = { email, username, password };
     signup(userData, onError, () => {
-      setShowSuccess(true);
+      // setShowSuccess(true);
       setTimeout(() => {
         navigate("/");
       }, 1700);
     });
     setUsername("");
     setPassword("");
+
+    navigate("/");
   };
 
   return (
