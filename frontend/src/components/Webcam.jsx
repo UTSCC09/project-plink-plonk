@@ -1,16 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createGestureRecognizer, predictWebcam } from "../js/mediapipe.mjs"; 
 
-export default function Webcam() {
+export default function Webcam({ currentSign, changeSign }) {
+  const webcamVideo = useRef(null);
   const [isWebcamOn, setIsWebcamOn] = useState(false);
-  const [webcam, setWebcam] = useState(null);
-  const [mediapipe, setMediapipe] = useState(null);
-  const [gesture, setGesture] = useState(null);
+  const [videoStream, setVideoStream] = useState(null);
+
   useEffect(() => {
-    // this is supposed to be async but i don't think it is rn
-    // TODO: look up async functions in useeffect
-    // setMediapipe(createGestureRecognizer());
-    const gestureRecognizer = createGestureRecognizer();
-  }, []);
+    // this may not be async even though it's supposed to be
+    createGestureRecognizer();
+  });
 
   function toggleCam() {
     if (isWebcamOn) {
@@ -20,36 +19,53 @@ export default function Webcam() {
     }
   }
 
-  function enableCam() {  
-    // getUsermedia parameters.
+  async function enableCam() {
+    // TODO turn this into try catch just in case
+
     const constraints = {
       video: true
     };
   
-    // Activate the webcam stream.
-    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-      document.getElementById("webcam").srcObject = stream;
-      document.getElementById("webcam").addEventListener("loadeddata", () => {predictWebcam(true);});
-    });
-  
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    webcamVideo.current.srcObject = stream;
+    setVideoStream(stream);  
     setIsWebcamOn(true);
   }
 
   function disableCam() {
-    document.getElementById("webcam").srcObject.getTracks().forEach((track) => {
-      track.stop();
-    });
-  
+    if (videoStream) {
+      videoStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+      setVideoStream(null);
+    }
     setIsWebcamOn(false);
+  }
+
+  function readSign() {
+    predictWebcam(webcamVideo.current, mediapipeCallback);
+  }
+
+  function mediapipeCallback(sign) {
+    if (sign != "None" && sign !== currentSign) {
+      console.log("old sign was ", currentSign, ", changed  to ", sign);
+      changeSign(sign);
+    }
   }
 
   return (
     <div>
-      <video id="webcam" width="480" height="360" />
+      <video
+        ref={webcamVideo}
+        autoPlay
+        width="360px"
+        height="480px"
+        onLoadedData={readSign}
+      />
       <button onClick={toggleCam}>
-        {isWebcamOn ? "DisableWebcam" : "Enable Webcam"}
+        {isWebcamOn ? "Disable Webcam" : "Enable Webcam"}
       </button>
-      
     </div>
   );
 }

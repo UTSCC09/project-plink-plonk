@@ -8,7 +8,6 @@ import Webcam from "../components/Webcam";
 
 import { getLobby } from "../js/lobby.mjs";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs"
-import { createGestureRecognizer } from "../js/mediapipe.mjs"; 
 
 const RACE_LENGTH = 5; // PLACEHOLDER
 
@@ -27,9 +26,7 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   const [messages, setMessages] = useState([0]);
 
   // Mediapipe
-  // const [webcam, setWebcam] = useState(null);
-  // const [mediapipe, setMediapipe] = useState(null);
-  const [gesture, setGesture] = useState(null);
+  const [currentSign, setCurrentSign] = useState(null);
 
   // Game
   const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
@@ -137,7 +134,10 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
           gameProgress={gameProgress}
           messages={messages}
         />
-        <Webcam />
+        <Webcam
+          currentSign={currentSign}
+          changeSign={setCurrentSign}
+        />
         {/* <PlayerList /> this isn't setup*/}
         {/* <Chat /> bonus */}
       </div>
