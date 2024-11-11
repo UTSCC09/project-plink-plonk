@@ -16,18 +16,15 @@ const SignUp = () => {
   const submit = async (e) => {
     e.preventDefault();
     console.log({ email, username, password });
-
     const userData = { email, username, password };
     signup(userData, onError, () => {
-      // setShowSuccess(true);
+      setShowSuccess(true);
       setTimeout(() => {
         navigate("/");
       }, 1700);
     });
     setUsername("");
     setPassword("");
-
-    navigate("/");
   };
 
   return (

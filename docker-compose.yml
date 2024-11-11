@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   # Nginx reverse proxy
   nginx-proxy:
@@ -31,12 +29,25 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ./frontend  # path to your frontend Dockerfile
+      context: ./frontend 
+      dockerfile: frontend.dockerfile  
     restart: always
+    environment:
+      - VIRTUAL_HOST=34.130.14.43
+      - VIRTUAL_PORT=3000
+    env_file:
+      - ./frontend/.env  
 
   # Backend 
   backend:
     container_name: backend
     build:
-      context: ./backend  # path to your backend Dockerfile
+      context: ./backend 
+      dockerfile: backend.dockerfile  
     restart: always
+    environment:
+      - VIRTUAL_HOST=34.130.14.43
+      - VIRTUAL_PATH=/api
+      - VIRTUAL_PORT=4000 
+    env_file:
+      - ./backend/.env  

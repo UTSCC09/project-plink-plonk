@@ -9,7 +9,7 @@ export function onError(err) {
 }
 
 function handleResponse(res) {
-  if (res.status != 200) {
+  if (res.status < 200 && res.status >= 300) {
     return res.text().then((text) => {
       throw new Error(`${text} (status: ${res.status})`);
     });
