@@ -1,9 +1,12 @@
 export default function Game({ gameEnd, gameProgress, messages }) {
   // Placeholder for UI :'(
   function displayRace(current, end, token) {
-    const before = Math.max(current - 1, 0);
+    if (current < 1) {
+      return token + " |" + " _ ".repeat(end) + "|";
+    }
+    const before = current - 1;
     const after = end - current;
-    return " _ ".repeat(before) + token + " _ ".repeat(after);
+    return "|" +  " _ ".repeat(before) + token + " _ ".repeat(after) + "|";
   }
   return (
     <div>

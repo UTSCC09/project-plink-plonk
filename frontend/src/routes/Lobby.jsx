@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef} from "react";
 import { Link } from "react-router-dom";
 import Peer from "peerjs";
 
@@ -13,7 +13,6 @@ const RACE_LENGTH = 5; // PLACEHOLDER
 
 export async function loader({ params }) {
   const lobbyDetails = await getLobby(params.lobbyId);
-  // const hasWebcam = hasGetUserMedia();
   return { lobbyDetails };
 }
 
@@ -29,18 +28,11 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   const [currentSign, setCurrentSign] = useState(null);
 
   // Game
+  const gameNotifications = useRef(null);
   const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
   const [gameProgress, setGameProgress] = useState(0);
   const [question, setQuestion] = useState(null);
   
-  // // Mediapipe
-  // useEffect(() => {
-  //   // this is supposed to be async but i don't think it is rn
-  //   // TODO: look up async functions in useeffect
-  //   // setMediapipe(createGestureRecognizer());
-  //   const gestureRecognizer = createGestureRecognizer();
-  // }, []);
-
   // // PeerJS
   // useEffect(() => {
   //   // placeholder: try joining game first
@@ -111,10 +103,10 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   }
 
   function playGame() {
-    const textArea = document.getElementById("notify");
-    setGameProgress(gameProgress++);
-    if (gameProgress.progress === gameProgress.end) {
-      textArea.innerText = "You've won!"
+    console.log(gameProgress);
+    setGameProgress(gameProgress + 1);
+    if (gameProgress === gameEnd) {
+      gameNotifications.current.innerText = "You've won!"
     } else {
       setQuestion(generateProblem());
     }
@@ -126,7 +118,9 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
       <div>
         <h2>Sign Sprinter</h2>
         <div>
-          <div id="notify">{generateProblemText(question)}</div>
+          <div ref={gameNotifications}>
+            {generateProblemText(question) + `\nYou are currently signing ${currentSign}`}
+            </div>
           <button onClick={startGame}>Start</button>
         </div>
         <Game

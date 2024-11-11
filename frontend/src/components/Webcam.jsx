@@ -47,7 +47,7 @@ export default function Webcam({ currentSign, changeSign }) {
     predictWebcam(webcamVideo.current, mediapipeCallback);
   }
 
-  function mediapipeCallback(sign) {
+  async function mediapipeCallback(sign) {
     if (sign != "None" && sign !== currentSign) {
       console.log("old sign was ", currentSign, ", changed  to ", sign);
       changeSign(sign);
