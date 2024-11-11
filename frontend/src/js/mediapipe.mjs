@@ -47,7 +47,7 @@ async function predictWebcam(goalSign) {
 
   if (results.gestures.length > 0) {
     const categoryName = results.gestures[0][0].categoryName;
-    if (categoryName = goalSign) {
+    if (categoryName == goalSign) {
       //do something
     }
   }
