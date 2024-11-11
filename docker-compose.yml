@@ -1,0 +1,53 @@
+services:
+  # Nginx reverse proxy
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+
+  # nginx-proxy-acme:
+  #   image: nginxproxy/acme-companion
+  #   container_name: nginx-proxy-acme
+  #   restart: always
+  #   volumes_from:
+  #     - nginx-proxy
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ./acme:/etc/acme.sh
+  #   environment:
+  #     - DEFAULT_EMAIL=your-email@example.com
+
+  # Frontend 
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend 
+      dockerfile: frontend.dockerfile  
+    restart: always
+    environment:
+      - VIRTUAL_HOST=34.130.14.43
+      - VIRTUAL_PORT=3000
+    env_file:
+      - ./frontend/.env  
+
+  # Backend 
+  backend:
+    container_name: backend
+    build:
+      context: ./backend 
+      dockerfile: backend.dockerfile  
+    restart: always
+    environment:
+      - VIRTUAL_HOST=34.130.14.43
+      - VIRTUAL_PATH=/api
+      - VIRTUAL_PORT=4000 
+    env_file:
+      - ./backend/.env  

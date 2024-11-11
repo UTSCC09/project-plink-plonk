@@ -1,68 +1,71 @@
-import { useState } from "react";
+import "../main.css";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { logOut, onError } from "../js/authentication.mjs";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  //TO DO: AUTHENTICATION
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+
+  useEffect(() => {
+    fetch(`${apiUrl}/api/check-auth`, {
+      method: "GET",
+      credentials: "include",
+    }).then((res) => {
+      if (res.ok) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+  }, []);
 
   return (
     <div>
       <h1>Plink Plonk</h1>
-      {isLoggedIn ? (
-        <LoggedIn 
-          setIsLoggedIn={setIsLoggedIn}/>
-      ) : (
-        <Public
-          setIsLoggedIn={setIsLoggedIn}/>
+      {isLoggedIn ? <LoggedIn /> : <Public />}
+    </div>
+  );
+}
+
+function LoggedIn() {
+  const [showSuccess, setShowSuccess] = useState(false);
+ 
+
+  return (
+    <div>
+      {showSuccess && (
+        <div className="popup">
+          <p>Successfully logged out!</p>
+        </div>
       )}
+      <div className="link-container">
+        <Link to={"/play"}>Play Sign Sprint</Link>
+        <Link
+          onClick={(e) => {
+            e.preventDefault();  
+            logOut(()=>{
+              setShowSuccess(true);
+              setTimeout(() => {
+                setShowSuccess(false);
+                window.location.reload(); 
+              }, 1000);
+            })
+          }}
+        >
+          Log Out
+        </Link>
+      </div>
     </div>
   );
 }
 
-function LoggedIn({setIsLoggedIn}) {
-  function logOut() {
-    console.log("please implement me :'(");
-    // placeholder
-    // clear session
-  }
-
-  function logOutFake() {
-    setIsLoggedIn(false);
-  }
-
+function Public() {
   return (
-    <div>
-      <Link to={"/play"}>
-        Play Sign Sprint
-      </Link>
-      <Link onClick={logOut}>
-        Log Out
-      </Link>
-      <Link onClick={logOutFake}>
-        Log Out(fake)
-      </Link>
-    </div>
-  );
-}
-
-function Public({setIsLoggedIn}) {
-  function logInFake() {
-    // Placeholder
-    setIsLoggedIn(true);
-    console.log("loggedin fake");
-  }
-
-  return (
-    <div>
-      <Link to={"/login"}>
-        Log In
-      </Link>
-      <Link to={"/signup"}>
-        Sign Up
-      </Link>
-      <Link onClick={logInFake}>
-        Log In (fake)
-      </Link>
+    <div className="link-container">
+      <Link to={"/login"}>Log In</Link>
+      <Link to={"/signup"}>Sign Up</Link>
     </div>
   );
 }
