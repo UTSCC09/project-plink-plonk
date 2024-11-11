@@ -40,7 +40,7 @@ async function deleteLobby() {
 async function getLobby(code) {
   // get lobby
   // if not exists ...
-  return null;
+  return {lobbyId: code}; // return just the id for now
 }
 
 async function getPublicLobbies() {
