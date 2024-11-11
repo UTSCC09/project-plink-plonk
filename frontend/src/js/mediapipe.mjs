@@ -28,8 +28,6 @@ async function createGestureRecognizer() {
   return gestureRecognizer;
 }
 
-createGestureRecognizer();
-
 // Check if webcam access is supported.
 function hasGetUserMedia() {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);

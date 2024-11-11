@@ -18,13 +18,13 @@ export async function loader({ params }) {
   return { lobbyDetails };
 }
 
-export default function Lobby({ lobbyDetails, hasWebcam }) {
+export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   // PeerJS 
   const [peer, setPeer] = useState(null);
   const [connection, setConnection] = useState(null);
   const [isHost, setIsHost] = useState(false); // need to configure backend to recognize host
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [messages, setMessages] = useState([{progress: 0}]);
+  const [messages, setMessages] = useState([0]);
 
   // Mediapipe
   // const [webcam, setWebcam] = useState(null);
@@ -32,7 +32,8 @@ export default function Lobby({ lobbyDetails, hasWebcam }) {
   const [gesture, setGesture] = useState(null);
 
   // Game
-  const [gameState, setGameState] = useState({progress: 0, end: RACE_LENGTH});
+  const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
+  const [gameProgress, setGameProgress] = useState(0);
   const [question, setQuestion] = useState(null);
   
   // // Mediapipe
@@ -108,15 +109,14 @@ export default function Lobby({ lobbyDetails, hasWebcam }) {
   // }
 
   function startGame(e) {
-    // Hide button
     e.target.style.visibility = "hidden";
-    // Generate question
     playGame();
   }
 
   function playGame() {
     const textArea = document.getElementById("notify");
-    if (gameState.progress === gameState.end) {
+    setGameProgress(gameProgress++);
+    if (gameProgress.progress === gameProgress.end) {
       textArea.innerText = "You've won!"
     } else {
       setQuestion(generateProblem());
@@ -133,7 +133,8 @@ export default function Lobby({ lobbyDetails, hasWebcam }) {
           <button onClick={startGame}>Start</button>
         </div>
         <Game
-          gameState={gameState}
+          gameEnd={gameEnd}
+          gameProgress={gameProgress}
           messages={messages}
         />
         <Webcam />
