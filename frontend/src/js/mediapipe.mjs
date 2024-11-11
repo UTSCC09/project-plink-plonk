@@ -40,7 +40,7 @@ async function predictWebcam(video, callback) {
     results = gestureRecognizer.recognizeForVideo(video, nowInMs);
   }
 
-  if (results.gestures.length > 0) {
+  if (results && results.gestures && results.gestures.length > 0) {
     const categoryName = results.gestures[0][0].categoryName;
     callback(categoryName);
   }
