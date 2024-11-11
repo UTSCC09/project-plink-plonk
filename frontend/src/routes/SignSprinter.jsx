@@ -1,6 +1,12 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, redirect } from "react-router-dom";
 
 import BackLink from "../components/BackLink";
+import { createLobby } from "../js/lobby.mjs";
+
+export async function action() {
+  const lobbyId = await createLobby();
+  return redirect(`/play/${lobbyId}`);
+}
 
 export default function SignSprinter() {
   return (
