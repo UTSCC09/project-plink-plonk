@@ -16,6 +16,7 @@ export async function loader({ params }) {
 }
 
 export default function Lobby({ lobbyDetails, hasWebcam = true }) {
+  
   const [peer, setPeer] = useState(null);
   const [connection, setConnection] = useState(null);
   const [isHost, setIsHost] = useState(false);
@@ -23,6 +24,7 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   const [messages, setMessages] = useState([]);
   const [lobbyIdInput, setLobbyIdInput] = useState("");
   const [countdown, setCountdown] = useState(null);
+  let countdownTime = 3;
 
   const gameNotifications = useRef(null);
   const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
@@ -90,7 +92,7 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   };
 
   function startGameCountdown() {
-    let countdownTime = 3;
+    //let countdownTime = 3;
     setCountdown(countdownTime);
     const countdownInterval = setInterval(() => {
       countdownTime -= 1;
@@ -167,11 +169,14 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
           <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
 
           {/* Render countdown */}
-          <div>
-            {messages.map((msg, index) => (
-              <p key={index}>{msg}</p>
-            ))}
-          </div>
+            {countdownTime !=0 && (
+              <div>
+              {messages.map((msg, index) => (
+                <p key={index}>{msg}</p>
+              ))}
+              </div>
+            )}
+          
         </div>
       )}
     </div>
