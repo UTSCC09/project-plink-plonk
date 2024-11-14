@@ -12,9 +12,11 @@ const app = express();
 // Serve static files from React app (to fix later)
 // app.use(express.static(path.join(__dirname, '../dist')));
 
+const allowedOrigins = [process.env.FRONTEND, process.env.FRONTEND2];
+
 app.use(express.json());
 app.use(cors({
-  origin: process.env.FRONTEND, // Set this to the exact origin of your frontend
+  origin: allowedOrigins, // Set this to the exact origin of your frontend
   credentials: true // Allow credentials like cookies to be sent
 }));
 

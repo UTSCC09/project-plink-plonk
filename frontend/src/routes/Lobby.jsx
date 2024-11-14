@@ -33,45 +33,45 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   const [gameProgress, setGameProgress] = useState(0);
   const [question, setQuestion] = useState(null);
   
-  // // PeerJS
-  // useEffect(() => {
-  //   // placeholder: try joining game first
-  //   console.log(lobbyDetails.lobbyId);
-  //   try{
-  //     const connection = peer.connect(lobbyDetails.lobbyId);
-  //   } catch(e) { console.error(e); }
+  // PeerJS
+  useEffect(() => {
+    // placeholder: try joining game first
+    console.log(lobbyDetails.lobbyId);
+    try{
+      const connection = peer.connect(lobbyDetails.lobbyId);
+    } catch(e) { console.error(e); }
 
-  //   // Creating instance
-  //   const newPeer = new Peer(lobbyDetails);
-  //   setPeer(newPeer);
+    // Creating instance
+    const newPeer = new Peer(lobbyDetails);
+    setPeer(newPeer);
 
-  //   // Try joining 
+    // Try joining 
 
-  //   // Setting up peer ID once peer's initialized
-  //   newPeer.on("open", (id) => {
-  //     console.log("Connected with ID:", id);
-  //     setLobbyId(id); // Use as lobby/game ID
-  //   });
+    // Setting up peer ID once peer's initialized
+    newPeer.on("open", (id) => {
+      console.log("Connected with ID:", id);
+      setLobbyId(id); // Use as lobby/game ID
+    });
 
-  //   // Listen for incoming connections
-  //   newPeer.on("connection", (conn) => {
-  //     console.log("Player joined the game:", conn.peer);
-  //     setConnection(conn);
-  //     conn.on("data", (data) => {
-  //       if (data === "join-game") {
-  //         console.log("Player ready to start the game");
-  //         setIsGameStarted(true);
-  //         conn.send("start-game");
-  //       } else {
-  //         setMessages((prev) => [...prev, `Opponent: ${data}`]);
-  //       }
-  //     });
-  //   });
+    // Listen for incoming connections
+    newPeer.on("connection", (conn) => {
+      console.log("Player joined the game:", conn.peer);
+      setConnection(conn);
+      conn.on("data", (data) => {
+        if (data === "join-game") {
+          console.log("Player ready to start the game");
+          setIsGameStarted(true);
+          conn.send("start-game");
+        } else {
+          setMessages((prev) => [...prev, `Opponent: ${data}`]);
+        }
+      });
+    });
 
-  //   return () => {
-  //     newPeer.destroy();
-  //   }
-  // }, []);
+    return () => {
+      newPeer.destroy();
+    }
+  }, []);
 
   // const conn = peer.connect(lobbyId);
   //   setConnection(conn);
