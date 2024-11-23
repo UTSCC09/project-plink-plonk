@@ -1,9 +1,10 @@
 export {
   createLobby,
   deleteLobby,
-  getLobby,
-  getPublicLobbies
-}
+  getPublicLobbies,
+  checkLobbyExist,
+  checkIsHost,
+};
 
 /**
  * A Lobby has the following fields:
@@ -13,39 +14,120 @@ export {
  *  host - one of the members that owns the room
  */
 
-const firstWordBank = [
-  "Slippery", "Yellow"
-]
+function handleResponse(res) {
+  if (res.status < 200 && res.status >= 300) {
+    return res.text().then((text) => {
+      throw new Error(`${text} (status: ${res.status})`);
+    });
+  }
 
-const secondWordBank = [
-  "Banana", "Mango", "Papaya"
-]
-
-function generateLobbyName() {
-  return firstWordBank[getRandomInt(0, firstWordBank.length)] + secondWordBank[getRandomInt(0, secondWordBank.length)];
+  return res.json();
 }
 
-async function createLobby(name) {
-  const lobbyName = generateLobbyName();
-  // check lobby does ont already exist
-  // post to api
+const firstWordBank = ["Slippery", "Yellow", "Yummy", "Funny"];
 
-  return lobbyName;
+const secondWordBank = [
+  "Banana",
+  "Mango",
+  "Papaya",
+  "Chicken",
+  "Turkey",
+  "Pineapple",
+];
+
+function generateLobbyName() {
+  return (
+    firstWordBank[getRandomInt(0, firstWordBank.length)] +
+    secondWordBank[getRandomInt(0, secondWordBank.length)]
+  );
+}
+
+async function checkIsHost(code) {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+
+  try {
+    const response = await fetch(`${apiUrl}/api/lobby/${code}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      // Response status is 200, user is host
+      return true;
+    } else {
+      // User is not host
+      return false;
+    }
+  } catch (error) {
+    console.error("Error checking host status:", error);
+    return false; // Default to false on error
+  }
+}
+
+async function checkLobbyExist(name, code) {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  fetch(`${apiUrl}/api/lobby/exist/${name}/${code}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  })
+    .then((response) => {
+      if (response.ok) {
+        // Response status is 200, lobby does not exist
+        return false;
+      } else {
+        // lobby exists
+        return true;
+      }
+    })
+    .catch((error) => {
+      console.error("Error checking lobby existence:", error);
+      return true; // In case of error, assume lobby does exist. reject
+    });
+}
+
+async function createLobby(name, code, visibility) {
+  // check lobby doesn't already exist
+  let exist = await checkLobbyExist(name, code);
+  if (exist) {
+    return 0;
+  }
+  
+  //const lobbyName = generateLobbyName();
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  fetch(`${apiUrl}/api/lobby/create`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ name, code, visibility }),
+  }).then(handleResponse);
+
+  // post to api
+  return code;
 }
 
 async function deleteLobby() {
   // delete to api
 }
 
-async function getLobby(code) {
-  // get lobby
-  // if not exists ...
-  return {lobbyId: code}; // return just the id for now
-}
+// don't really need this..  the code is already going to be passed in the url
+// and isHost can be specified from either Create lobby or Join Lobby
+// async function getLobby(code) {
+//   // get lobby
+//   // if not exists ...
+//   return { lobbyId: code }; // return just the id for now
+// }
 
 async function getPublicLobbies() {
   // get list of all public lobbies
-  const lobbies = [{code: "test1"}, {code: "test2"}]
+  const lobbies = [{ code: "test1" }, { code: "test2" }];
   return lobbies;
 }
 

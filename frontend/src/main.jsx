@@ -11,7 +11,7 @@ import ErrorPage from "./routes/ErrorPage";
 import Home from "./routes/Home";
 import LogIn from "./routes/LogIn";
 import SignUp from "./routes/SignUp";
-import SignSprinter /*,  { action as playAction } */ from "./routes/SignSprinter";
+import SignSprinter ,  { action as playAction }  from "./routes/SignSprinter";
 import Lobby, { loader as lobbyLoader } from "./routes/Lobby";
 import JoinLobby, { loader as joinLoader } from "./routes/JoinLobby";
 import LobbyList, { loader as lobbyListLoader } from "./routes/LobbyList";
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     path: "/play",
     element: <SignSprinter />,
     errorElement: <ErrorPage />,
-    //action: playAction,
+    action: playAction,
     children: [
       {
         path: "join",
@@ -56,7 +56,7 @@ const router = createBrowserRouter([
     ]
   },
   {
-    path: "play/:lobbyId",
+    path: "/play/:lobbyId",
     element: <Lobby />,
     errorElement: <ErrorPage />,
     loader: lobbyLoader

@@ -25,11 +25,8 @@ router.post("/signup", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = { email, username, password: hashedPassword }; // Add hashed password here in real implementation
+    const newUser = { email, username, password: hashedPassword };  
     const result = await usersCollection.insertOne(newUser);
-
-    console.log(email, username, hashedPassword);
-
     res
       .status(201)
       .json({

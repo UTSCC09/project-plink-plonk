@@ -1,4 +1,4 @@
-import { getLobby } from "../js/lobby.mjs";
+//import { getLobby } from "../js/lobby.mjs";
 import { Form, replace } from "react-router-dom";
 
 export async function loader({ request }) {
@@ -7,7 +7,7 @@ export async function loader({ request }) {
     return null;
   }
 
-  const lobby = await getLobby(code);
+  //const lobby = await getLobby(code);
   return replace(`/play/${code}`)
 }
 

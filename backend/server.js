@@ -4,6 +4,7 @@ import { dirname } from "path";
 import cors from 'cors';
 import userRoutes from './routes/user.js';
 import recordRoutes from './routes/record.js';
+import lobbyRoutes from './routes/lobby.js';
 import session from "express-session";
 import { parse, serialize } from "cookie";
 
@@ -48,6 +49,7 @@ app.use(function (req, res, next) {
 
 // Route handling
 app.use("/api/records", recordRoutes);
+app.use("/api/lobby", lobbyRoutes);
 app.use("/api/", userRoutes); // for login and signup
 
 // API route ex.
