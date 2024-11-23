@@ -43,6 +43,7 @@ export default function Lobby({ hasWebcam = true }) {
 
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [messages, setMessages] = useState([0]);
+  
   let newPeer;
 
   // Mediapipe
@@ -81,28 +82,30 @@ export default function Lobby({ hasWebcam = true }) {
         });
       });
     }  
+    else{
+      console.log("I'm a guest. let's set up a PeerJs connection to host");
+      const peer = new Peer();
+      setPeer(peer);
 
-    // else, you're joining the game
-    // try{
-    //   const connection = peer.connect(lobbyDetails.lobbyId);
-    // } catch(e) { console.error(e); }
-
-    // Creating instance
-
-    // Setting up peer ID once peer's initialized
-
-    return () => {
-      newPeer.destroy();
-    }
-  }, []);
-
-  // const conn = peer.connect(lobbyId);
-  //   setConnection(conn);
-
-  // conn.on("open", () => {
-  //   console.log("Connected to host");
-  //   conn.send("join-game"); // Notify host we wanna join
-  // });
+      peer.on("open", () => {
+        console.log("Guest Peer ID:", peer.id);  // Log the guest's Peer ID
+        const conn = peer.connect(lobbyId);  // Now connect to the host
+        setConnection(conn);
+  
+        conn.on("open", () => {
+          console.log("Connected to host with Guest Peer ID:", peer.id);  // Log the Guest Peer ID after connection is established
+          conn.send("join-game"); // Notify host that the guest wants to join
+        });
+  
+        conn.on("data", (data) => {
+          if (data === "start-game") {
+            console.log("Game is starting!");
+            setIsGameStarted(true);
+          } else {
+            console.log("Received message:", data);
+          }
+        });
+      });
 
   // conn.on("data", (data) => {
   //   if (data === "start-game") {
@@ -119,6 +122,31 @@ export default function Lobby({ hasWebcam = true }) {
   //     setMessages([message]);
   //   }
   // }
+    }
+
+    // else, you're joining the game
+    // try{
+    //   const connection = peer.connect(lobbyDetails.lobbyId);
+    // } catch(e) { console.error(e); }
+
+    // Creating instance
+
+    // Setting up peer ID once peer's initialized
+
+    return () => {
+      if (newPeer) {
+        console.log("Destroying peer connection");
+        newPeer.destroy();
+      }
+
+      if (peer) {
+        console.log("Destroying guest peer connection");
+        peer.destroy();
+      }
+    };
+  }, []);
+
+
 
   function startGame(e) {
     e.target.style.visibility = "hidden";

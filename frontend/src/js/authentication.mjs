@@ -33,6 +33,7 @@ export function signup(userData, fail, success) {
 }
 
 export function logOut(success) {
+  document.cookie = `lobbyId=; max-age=0; path=/;`;
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   fetch(`${apiUrl}/api/signout/`, {
     method: "GET",
