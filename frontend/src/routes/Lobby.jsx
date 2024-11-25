@@ -70,7 +70,7 @@ export default function Lobby({ hasWebcam = true }) {
         // Listen for incoming connections
         host.on("connection", (conn) => {
           console.log("Player joined the game:", conn.peer);
-          
+
           conn.on("data", (data) => {
             console.log("Data received by host:", data);
             if (data.type === "join-game") {
@@ -180,13 +180,36 @@ export default function Lobby({ hasWebcam = true }) {
     }
   }
 
+  function copyToClipboard(lobbyId) {
+    navigator.clipboard.writeText(lobbyId).then(
+      () => {
+        alert("Lobby ID copied to clipboard!");
+      },
+      (err) => {
+        console.error("Failed to copy text: ", err);
+      }
+    );
+  }
+
   return (
     <div>
       <BackLink />
       <div>
         <h2>Sign Sprinter</h2>
-        <div>
-          <h2>Share LobbyID with friends: {lobbyId}</h2>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <h2 style={{ marginRight: "10px" }}>
+            Share LobbyID with friends: {lobbyId}
+          </h2>
+          <img
+            src="/copy.png"
+            alt="Copy"
+            onClick={() => copyToClipboard(lobbyId)}
+            style={{
+              width: "24px",
+              height: "24px",
+              cursor: "pointer",
+            }}
+          />
         </div>
 
         {/* Player List */}
