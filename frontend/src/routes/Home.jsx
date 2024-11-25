@@ -24,6 +24,11 @@ export default function Home() {
   return (
     <div>
       <h1>Plink Plonk</h1>
+      <img 
+      src="/motion.gif" 
+      alt="Motion GIF" 
+      style={{ width: "300px", height: "auto" }} 
+    />
       {isLoggedIn ? <LoggedIn /> : <Public />}
     </div>
   );
