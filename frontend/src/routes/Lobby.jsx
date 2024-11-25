@@ -9,7 +9,7 @@ import Webcam from "../components/Webcam";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
-const RACE_LENGTH = 3; // PLACEHOLDER
+const RACE_LENGTH = 10; // PLACEHOLDER
 
 export async function loader({ params }) {
   const { lobbyId } = params;
