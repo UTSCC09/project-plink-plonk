@@ -1,50 +1,48 @@
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Peer from "peerjs";
-import { useParams, useLoaderData, useLocation } from 'react-router-dom';
-//import { useCookies } from 'react-cookie';
+import { useParams, useLoaderData, useLocation } from "react-router-dom";
 
 import BackLink from "../components/BackLink";
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
 
-// got rid of getLobby,
-import { checkIsHost } from "../js/lobby.mjs";
-import { generateProblemText, generateProblem } from "../js/problemBank.mjs"
+import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
 const RACE_LENGTH = 5; // PLACEHOLDER
 
 export async function loader({ params }) {
-  const { lobbyId } = params; 
-  console.log(lobbyId);
-  //const isHost = await checkIsHost(lobbyId);
-  return { lobbyId};
+  const { lobbyId } = params;
+  const username = getCookie("username");
+  return { lobbyId, username };
 }
 
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
+  if (parts.length === 2) return parts.pop().split(";").shift();
   return null;
 };
 
-// lobby code is already in the parameter
 export default function Lobby({ hasWebcam = true }) {
-  const {lobbyId} = useLoaderData();
-  //const location = useLocation();
-  
-  // PeerJS 
-  const [peer, setPeer] = useState(null);
-  const [connection, setConnection] = useState(null);
-  //const [isHost, setIsHost] = useState(false); // need to configure backend to recognize host
-  const isHost = getCookie('lobbyId') === lobbyId;
+  const { lobbyId, username } = useLoaderData();
+
+  // PeerJS
+  const hostPeer = useRef(null);
+  const playerRef = useRef(null);
+
+  //const [connection, setConnection] = useState(null);
+  const connections = useRef({});
+
+  const isHost = getCookie("lobbyId") === lobbyId;
+
   console.log("isHost value:");
   console.log(isHost);
 
+  const [playerList, setPlayerList] = useState([]);
+
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [messages, setMessages] = useState([0]);
-  
-  let newPeer;
 
   // Mediapipe
   const [currentSign, setCurrentSign] = useState(null);
@@ -54,100 +52,119 @@ export default function Lobby({ hasWebcam = true }) {
   const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
   const [gameProgress, setGameProgress] = useState(0);
   const [question, setQuestion] = useState(null);
-  
+
   // PeerJS + check Host
   useEffect(() => {
-    if (isHost){
+    if (isHost) {
       console.log("Yay! I'm the host");
-      newPeer = new Peer(lobbyId);
-      setPeer(newPeer);
+      if (!hostPeer.current) {
+        console.log("Creating host Peer");
+        hostPeer.current = new Peer(lobbyId);
+      }
 
-      newPeer.on("open", (id) => {
+      const host = hostPeer.current;
+      host.on("open", (id) => {
         console.log("Connected with ID:", id);
-        //setLobbyId(id); // Use as lobby/game ID
-      });
-  
-      // Listen for incoming connections
-      newPeer.on("connection", (conn) => {
-        console.log("Player joined the game:", conn.peer);
-        setConnection(conn);
-        conn.on("data", (data) => {
-          if (data === "join-game") {
-            console.log("Player ready to start the game");
-            setIsGameStarted(true);
-            conn.send("start-game");
-          } else {
-            setMessages((prev) => [...prev, `Opponent: ${data}`]);
-          }
-        });
-      });
-    }  
-    else{
-      console.log("I'm a guest. let's set up a PeerJs connection to host");
-      const peer = new Peer();
-      setPeer(peer);
+        setPlayerList([{ id, username }]);
 
-      peer.on("open", () => {
-        console.log("Guest Peer ID:", peer.id);  // Log the guest's Peer ID
-        const conn = peer.connect(lobbyId);  // Now connect to the host
-        setConnection(conn);
-  
-        conn.on("open", () => {
-          console.log("Connected to host with Guest Peer ID:", peer.id);  // Log the Guest Peer ID after connection is established
-          conn.send("join-game"); // Notify host that the guest wants to join
+        // Listen for incoming connections
+        host.on("connection", (conn) => {
+          console.log("Player joined the game:", conn.peer);
+          
+          conn.on("data", (data) => {
+            console.log("Data received by host:", data);
+            if (data.type === "join-game") {
+              console.log("Player ready to start the game");
+
+              setPlayerList((prevPlayerList) => {
+                const isAlreadyInList = prevPlayerList.some(
+                  (player) => player.id === conn.peer
+                );
+
+                let updatedList = prevPlayerList;
+
+                if (!isAlreadyInList) {
+                  updatedList = [
+                    ...prevPlayerList,
+                    { id: conn.peer, username: data.username },
+                  ];
+                }
+                connections.current[conn.peer] = conn;
+
+                // Send the updated list to everyone except the first person
+                updatedList.forEach((player, index) => {
+                  if (index !== 0) {
+                    const playerConnection = connections.current[player.id];
+                    if (playerConnection) {
+                      playerConnection.send({
+                        type: "player-list",
+                        playerList: updatedList,
+                      });
+                      console.log("sending list to player");
+                    }
+                  }
+                });
+                return updatedList;
+              });
+            } else {
+              setMessages((prev) => [...prev, `Opponent: ${data}`]);
+            }
+          });
         });
-  
+      });
+    } else {
+      console.log("I'm a guest. let's set up a PeerJs connection to host");
+      if (!playerRef.current) {
+        playerRef.current = new Peer();
+      }
+      const player = playerRef.current;
+
+      player.on("open", () => {
+        console.log("Guest Peer ID:", player.id);
+        const conn = player.connect(lobbyId);
+        //setConnection(conn);
+
+        conn.on("open", () => {
+          console.log("Connected to host with Guest Peer ID:", player.id);
+          conn.send({ type: "join-game", username: getCookie("username") });
+          console.log("Sent data..");
+        });
+
         conn.on("data", (data) => {
-          if (data === "start-game") {
+          if (data.type === "player-list") {
+            console.log("Got data, type is player-list");
+            setPlayerList(data.playerList);
+            console.log("Got the data type player-list. Well.. did it update?");
+          } else if (data === "start-game") {
             console.log("Game is starting!");
             setIsGameStarted(true);
+          } else if (data === "send-message") {
+            setMessages((prev) => [...prev, `Opponent: ${data}`]);
           } else {
             console.log("Received message:", data);
           }
         });
       });
-
-  // conn.on("data", (data) => {
-  //   if (data === "start-game") {
-  //     console.log("Game is starting!");
-  //     setIsGameStarted(true);
-  //   } else {
-  //     setMessages((prev) => [...prev, `Opponent: ${data}`]);
-  //   }
-  // });
-
-  // function sendProgress(message) {
-  //   if (connection && connection.open) {
-  //     connection.send(message);
-  //     setMessages([message]);
-  //   }
-  // }
     }
-
-    // else, you're joining the game
-    // try{
-    //   const connection = peer.connect(lobbyDetails.lobbyId);
-    // } catch(e) { console.error(e); }
-
-    // Creating instance
-
-    // Setting up peer ID once peer's initialized
-
     return () => {
-      if (newPeer) {
+      if (hostPeer.current && hostPeer.current.open) {
         console.log("Destroying peer connection");
-        newPeer.destroy();
+        hostPeer.current.destroy();
       }
 
-      if (peer) {
+      if (playerRef.current && playerRef.current.open) {
         console.log("Destroying guest peer connection");
-        peer.destroy();
+        playerRef.current.destroy();
       }
     };
   }, []);
 
-
-
+  function sendProgress(message) {
+    if (connection && connection.open) {
+      connection.send(message);
+      setMessages([message]);
+    }
+  }
   function startGame(e) {
     e.target.style.visibility = "hidden";
     playGame();
@@ -157,7 +174,7 @@ export default function Lobby({ hasWebcam = true }) {
     console.log(gameProgress);
     setGameProgress(gameProgress + 1);
     if (gameProgress === gameEnd) {
-      gameNotifications.current.innerText = "You've won!"
+      gameNotifications.current.innerText = "You've won!";
     } else {
       setQuestion(generateProblem());
     }
@@ -169,9 +186,26 @@ export default function Lobby({ hasWebcam = true }) {
       <div>
         <h2>Sign Sprinter</h2>
         <div>
+          <h2>Share LobbyID with friends: {lobbyId}</h2>
+        </div>
+
+        {/* Player List */}
+        <div>
+          <h3>Players in Lobby:</h3>
+          <ul>
+            {playerList.map((player) => (
+              <li key={player.id}>
+                Player `{player.username}` with ID: {player.id}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
           <div ref={gameNotifications}>
-            {generateProblemText(question) + `\nYou are currently signing ${currentSign}`}
-            </div>
+            {generateProblemText(question) +
+              `\nYou are currently signing ${currentSign}`}
+          </div>
           <button onClick={startGame}>Start</button>
         </div>
         <Game
@@ -179,10 +213,7 @@ export default function Lobby({ hasWebcam = true }) {
           gameProgress={gameProgress}
           messages={messages}
         />
-        <Webcam
-          currentSign={currentSign}
-          changeSign={setCurrentSign}
-        />
+        <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
         {/* <PlayerList /> this isn't setup*/}
         {/* <Chat /> bonus */}
       </div>
