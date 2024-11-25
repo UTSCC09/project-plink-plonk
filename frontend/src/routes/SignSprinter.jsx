@@ -9,16 +9,6 @@ export async function action({ request }) {
   const name = formData.get("name");
   const visibility = formData.get("visibility");
 
-  // Generate a PeerJS ID
-  const peer = new Peer(); // Create PeerJS instance
-  const code = await new Promise((resolve) => {
-    peer.on("open", (id) => {
-      resolve(id); // Get the code
-    });
-  });
-
-  peer.disconnect();
-
   try {
     const lobbyId = await createLobby(name, visibility);
 
