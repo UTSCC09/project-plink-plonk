@@ -9,7 +9,7 @@ import Webcam from "../components/Webcam";
 import { getLobby } from "../js/lobby.mjs";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs"
 
-const RACE_LENGTH = 5; // PLACEHOLDER
+const RACE_LENGTH = 20; // PLACEHOLDER
 
 export async function loader({ params }) {
   const lobbyDetails = await getLobby(params.lobbyId);
@@ -28,74 +28,18 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   const [currentSign, setCurrentSign] = useState(null);
 
   // Game
-  const gameNotifications = useRef(null);
+  const gameText = useRef(null);
   const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
   const [gameProgress, setGameProgress] = useState(0);
   const [question, setQuestion] = useState(null);
   
-  // // PeerJS
-  // useEffect(() => {
-  //   // placeholder: try joining game first
-  //   console.log(lobbyDetails.lobbyId);
-  //   try{
-  //     const connection = peer.connect(lobbyDetails.lobbyId);
-  //   } catch(e) { console.error(e); }
-
-  //   // Creating instance
-  //   const newPeer = new Peer(lobbyDetails);
-  //   setPeer(newPeer);
-
-  //   // Try joining 
-
-  //   // Setting up peer ID once peer's initialized
-  //   newPeer.on("open", (id) => {
-  //     console.log("Connected with ID:", id);
-  //     setLobbyId(id); // Use as lobby/game ID
-  //   });
-
-  //   // Listen for incoming connections
-  //   newPeer.on("connection", (conn) => {
-  //     console.log("Player joined the game:", conn.peer);
-  //     setConnection(conn);
-  //     conn.on("data", (data) => {
-  //       if (data === "join-game") {
-  //         console.log("Player ready to start the game");
-  //         setIsGameStarted(true);
-  //         conn.send("start-game");
-  //       } else {
-  //         setMessages((prev) => [...prev, `Opponent: ${data}`]);
-  //       }
-  //     });
-  //   });
-
-  //   return () => {
-  //     newPeer.destroy();
-  //   }
-  // }, []);
-
-  // const conn = peer.connect(lobbyId);
-  //   setConnection(conn);
-
-  // conn.on("open", () => {
-  //   console.log("Connected to host");
-  //   conn.send("join-game"); // Notify host we wanna join
-  // });
-
-  // conn.on("data", (data) => {
-  //   if (data === "start-game") {
-  //     console.log("Game is starting!");
-  //     setIsGameStarted(true);
-  //   } else {
-  //     setMessages((prev) => [...prev, `Opponent: ${data}`]);
-  //   }
-  // });
-
-  // function sendProgress(message) {
-  //   if (connection && connection.open) {
-  //     connection.send(message);
-  //     setMessages([message]);
-  //   }
-  // }
+  // Progresses game if sign on camera matches question
+  useEffect(() => {
+    if (question && currentSign && currentSign === question.label) {
+      console.log(`Question is ${question.label}, sign is ${currentSign}, so we move`)
+      playGame();
+    }
+  }, [currentSign]);
 
   function startGame(e) {
     e.target.style.visibility = "hidden";
@@ -103,12 +47,18 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
   }
 
   function playGame() {
-    console.log(gameProgress);
     setGameProgress(gameProgress + 1);
+    console.log("Moved to: " + gameProgress);
     if (gameProgress === gameEnd) {
-      gameNotifications.current.innerText = "You've won!"
+      gameText.current.innerText = "You've won!"
     } else {
-      setQuestion(generateProblem());
+      // Create next question
+      let newQuestion = generateProblem();
+      // Avoid repeat of current question
+      while (newQuestion === question) {
+        newQuestion = generateProblem();
+      }
+      setQuestion(newQuestion);
     }
   }
 
@@ -118,7 +68,7 @@ export default function Lobby({ lobbyDetails, hasWebcam = true }) {
       <div>
         <h2>Sign Sprinter</h2>
         <div>
-          <div ref={gameNotifications}>
+          <div ref={gameText}>
             {generateProblemText(question) + `\nYou are currently signing ${currentSign}`}
             </div>
           <button onClick={startGame}>Start</button>
