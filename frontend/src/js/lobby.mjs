@@ -91,11 +91,11 @@ async function checkLobbyExist(name, code) {
     });
 }
 
-async function createLobby(name, code, visibility) {
+async function createLobby(name, visibility) {
   // check lobby doesn't already exist
-  let exist = await checkLobbyExist(name, code);
-  if (exist) {
-    return 0;
+  let code = generateLobbyName();
+  while (await checkLobbyExist(code)){
+    code = generateLobbyName();
   }
   
   //const lobbyName = generateLobbyName();
@@ -113,6 +113,20 @@ async function createLobby(name, code, visibility) {
   return code;
 }
 
+async function closeLobbyVisibility(code) {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  fetch(`${apiUrl}/api/lobby/close/${code}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ code }),
+  }).then(handleResponse);
+  // post to api
+  return code;
+}
+
 async function deleteLobby() {
   // delete to api
 }
@@ -126,6 +140,23 @@ async function deleteLobby() {
 // }
 
 async function getPublicLobbies() {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  fetch(`${apiUrl}/api/lobby/public`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  }).then(handleResponse);
+
+  const data = await response.json();
+
+  if (data && data.data) {
+      return data.data; // Return the list of public lobbies
+    } else {
+      throw new Error("Error getting data");
+    }
+
   // get list of all public lobbies
   const lobbies = [{ code: "test1" }, { code: "test2" }];
   return lobbies;

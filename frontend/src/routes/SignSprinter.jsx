@@ -20,14 +20,9 @@ export async function action({ request }) {
   peer.disconnect();
 
   try {
-    const lobbyId = await createLobby(name, code, visibility);
+    const lobbyId = await createLobby(name, visibility);
 
-    if (lobbyId ==0){
-      console.error("Lobby already exists");
-      return redirect(`/`);
-    }
-
-    document.cookie = `lobbyId=${lobbyId}; max-age=600000; path=/`;
+    document.cookie = `isHost=True; max-age=600000; path=/`;
     
     // need to add secure: true in production
 

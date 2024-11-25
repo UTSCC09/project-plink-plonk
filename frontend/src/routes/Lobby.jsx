@@ -34,7 +34,10 @@ export default function Lobby({ hasWebcam = true }) {
   //const [connection, setConnection] = useState(null);
   const connections = useRef({});
 
-  const isHost = getCookie("lobbyId") === lobbyId;
+  let isHost = false;
+  if (getCookie("isHost") == "True"){
+    isHost = true;
+  }
 
   console.log("isHost value:");
   console.log(isHost);
