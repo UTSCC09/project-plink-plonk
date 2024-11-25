@@ -9,7 +9,7 @@ import Webcam from "../components/Webcam";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
-const RACE_LENGTH = 5; // PLACEHOLDER
+const RACE_LENGTH = 3; // PLACEHOLDER
 
 export async function loader({ params }) {
   const { lobbyId } = params;
@@ -51,7 +51,7 @@ export default function Lobby({ hasWebcam = true }) {
   const [currentSign, setCurrentSign] = useState(null);
 
   // Game
-  const gameNotifications = useRef(null);
+  const gameText = useRef(null);
   const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
   const [gameProgress, setGameProgress] = useState(0);
   const [question, setQuestion] = useState(null);
@@ -162,6 +162,14 @@ export default function Lobby({ hasWebcam = true }) {
     };
   }, []);
 
+  // Progresses game if sign on camera matches question
+  useEffect(() => {
+    if (question && currentSign && currentSign === question.label) {
+      console.log(`Question is ${question.label}, sign is ${currentSign}, so we move`)
+      playGame();
+    }
+  }, [currentSign]);
+
   function sendProgress(message) {
     if (connection && connection.open) {
       connection.send(message);
@@ -174,12 +182,18 @@ export default function Lobby({ hasWebcam = true }) {
   }
 
   function playGame() {
-    console.log(gameProgress);
     setGameProgress(gameProgress + 1);
+    console.log("Moved to: " + gameProgress);
     if (gameProgress === gameEnd) {
-      gameNotifications.current.innerText = "You've won!";
+      gameText.current.innerText = "You've won!"
     } else {
-      setQuestion(generateProblem());
+      // Create next question
+      let newQuestion = generateProblem();
+      // Avoid repeat of current question
+      while (newQuestion === question) {
+        newQuestion = generateProblem();
+      }
+      setQuestion(newQuestion);
     }
   }
 
@@ -228,10 +242,9 @@ export default function Lobby({ hasWebcam = true }) {
         </div>
 
         <div>
-          <div ref={gameNotifications}>
-            {generateProblemText(question) +
-              `\nYou are currently signing ${currentSign}`}
-          </div>
+          <div ref={gameText}>
+            {generateProblemText(question) + `\nYou are currently signing ${currentSign}`}
+            </div>
           <button onClick={startGame}>Start</button>
         </div>
         <Game
