@@ -30,12 +30,13 @@ export default function Lobby({ hasWebcam = true }) {
   // PeerJS
   const hostPeer = useRef(null);
   const playerRef = useRef(null);
+  const connRef = useRef(null);
 
   //const [connection, setConnection] = useState(null);
   const connections = useRef({});
 
   let isHost = false;
-  if (getCookie("isHost") == "True"){
+  if (getCookie("isHost") == "True") {
     isHost = true;
   }
 
@@ -43,6 +44,7 @@ export default function Lobby({ hasWebcam = true }) {
   console.log(isHost);
 
   const [playerList, setPlayerList] = useState([]);
+  const [progressList, setProgressList] = useState([]);
 
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [messages, setMessages] = useState([0]);
@@ -69,6 +71,8 @@ export default function Lobby({ hasWebcam = true }) {
       host.on("open", (id) => {
         console.log("Connected with ID:", id);
         setPlayerList([{ id, username }]);
+
+        setProgressList([{ id, username, progress: 0 }]);
 
         // Listen for incoming connections
         host.on("connection", (conn) => {
@@ -109,6 +113,59 @@ export default function Lobby({ hasWebcam = true }) {
                 });
                 return updatedList;
               });
+
+              setProgressList((prevProgressList) => {
+                const isAlreadyInList = prevProgressList.some(
+                  (player) => player.id === conn.peer
+                );
+
+                let updatedList = prevProgressList;
+
+                if (!isAlreadyInList) {
+                  updatedList = [
+                    ...prevProgressList,
+                    { id: conn.peer, username: data.username, progress: 0 },
+                  ];
+                }
+
+                // Send the updated list to everyone except the first person
+                updatedList.forEach((player, index) => {
+                  if (index !== 0) {
+                    const playerConnection = connections.current[player.id];
+                    if (playerConnection) {
+                      playerConnection.send({
+                        type: "progress-update",
+                        progressList: updatedList,
+                      });
+                      console.log("Sending progress list to player");
+                    }
+                  }
+                });
+                return updatedList;
+              });
+            } else if (data.type == "progress-update") {
+              // Host gets an update from a player and sends it to everyone 
+              setProgressList((prevProgressList) => {
+                let user = prevProgressList.find(
+                  (user) => user.username == data.username
+                );
+                user.progress = data.progress;
+                const updatedList = [...prevProgressList];
+
+                prevProgressList.forEach((player, index) => {
+                  if (index !== 0) {
+                    const playerConnection = connections.current[player.id];
+                    if (playerConnection) {
+                      playerConnection.send({
+                        type: "progress-update",
+                        progressList: updatedList,
+                      });
+                      console.log("Sending progress list to player!!");
+                    }
+                  }
+                });
+                return updatedList;
+              });
             } else {
               setMessages((prev) => [...prev, `Opponent: ${data}`]);
             }
@@ -125,6 +182,9 @@ export default function Lobby({ hasWebcam = true }) {
       player.on("open", () => {
         console.log("Guest Peer ID:", player.id);
         const conn = player.connect(lobbyId);
+        if (!connRef.current) {
+          connRef.current = conn;
+        }
         //setConnection(conn);
 
         conn.on("open", () => {
@@ -137,7 +197,9 @@ export default function Lobby({ hasWebcam = true }) {
           if (data.type === "player-list") {
             console.log("Got data, type is player-list");
             setPlayerList(data.playerList);
-            console.log("Got the data type player-list. Well.. did it update?");
+          } else if (data.type == "progress-update") {
+            setProgressList(data.progressList);
+            console.log("Got updated progress List");
           } else if (data === "start-game") {
             console.log("Game is starting!");
             setIsGameStarted(true);
@@ -165,7 +227,9 @@ export default function Lobby({ hasWebcam = true }) {
   // Progresses game if sign on camera matches question
   useEffect(() => {
     if (question && currentSign && currentSign === question.label) {
-      console.log(`Question is ${question.label}, sign is ${currentSign}, so we move`)
+      console.log(
+        `Question is ${question.label}, sign is ${currentSign}, so we move`
+      );
       playGame();
     }
   }, [currentSign]);
@@ -184,8 +248,41 @@ export default function Lobby({ hasWebcam = true }) {
   function playGame() {
     setGameProgress(gameProgress + 1);
     console.log("Moved to: " + gameProgress);
+
+    if (!isHost) {
+      let conn = connRef.current;
+      conn.send({
+        type: "progress-update",
+        username: getCookie("username"),
+        progress: gameProgress,
+      });
+    }
+
+    // Host updates their progress to others
+    if (isHost) {
+      setProgressList((prevProgressList) => {
+        let user = prevProgressList.find((user) => user.username == username);
+        user.progress = gameProgress;
+        const updatedList = [...prevProgressList];
+
+        prevProgressList.forEach((player, index) => {
+          if (index !== 0) {
+            const playerConnection = connections.current[player.id];
+            if (playerConnection) {
+              playerConnection.send({
+                type: "progress-update",
+                progressList: updatedList,
+              });
+              console.log("Sending progress list to player!!");
+            }
+          }
+        });
+        return updatedList;
+      });
+    }
+
     if (gameProgress === gameEnd) {
-      gameText.current.innerText = "You've won!"
+      gameText.current.innerText = "You've won!";
     } else {
       // Create next question
       let newQuestion = generateProblem();
@@ -243,14 +340,16 @@ export default function Lobby({ hasWebcam = true }) {
 
         <div>
           <div ref={gameText}>
-            {generateProblemText(question) + `\nYou are currently signing ${currentSign}`}
-            </div>
+            {generateProblemText(question) +
+              `\nYou are currently signing ${currentSign}`}
+          </div>
           <button onClick={startGame}>Start</button>
         </div>
         <Game
           gameEnd={gameEnd}
           gameProgress={gameProgress}
-          messages={messages}
+          progressList={progressList}
+          username={username}
         />
         <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
         {/* <PlayerList /> this isn't setup*/}
