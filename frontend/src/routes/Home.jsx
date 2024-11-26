@@ -3,22 +3,19 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { logOut, onError } from "../js/authentication.mjs";
 import { useNavigate } from "react-router-dom";
+import { checkAuth } from "../js/lobby.mjs";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/check-auth`, {
-      method: "GET",
-      credentials: "include",
-    }).then((res) => {
-      if (res.ok) {
-        setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-      }
-    });
+    const checkAuthStatus = async () => {
+      const logInValue = await checkAuth();  
+      console.log("here");
+      console.log(logInValue)
+      setIsLoggedIn(logInValue);   
+    };
+    checkAuthStatus();   
   }, []);
 
   return (

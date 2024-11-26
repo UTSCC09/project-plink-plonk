@@ -4,6 +4,8 @@ export {
   getPublicLobbies,
   checkLobbyExist,
   checkIsHost,
+  closeLobbyVisibility,
+  checkAuth,
 };
 
 /**
@@ -40,6 +42,25 @@ function generateLobbyName() {
     firstWordBank[getRandomInt(0, firstWordBank.length)] +
     secondWordBank[getRandomInt(0, secondWordBank.length)]
   );
+}
+
+async function checkAuth() {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  let authorized = false;
+  try {
+    const response = await fetch(`${apiUrl}/api/check-auth`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (response.ok) {
+      authorized = true;
+    }
+  } catch (error) {
+    console.error("Error checking if user is authorized:", error);
+    return false; // Default to false on error
+  }
+
+  return authorized;
 }
 
 async function checkIsHost(code) {
@@ -94,10 +115,10 @@ async function checkLobbyExist(name, code) {
 async function createLobby(name, visibility) {
   // check lobby doesn't already exist
   let code = generateLobbyName();
-  while (await checkLobbyExist(code)){
+  while (await checkLobbyExist(code)) {
     code = generateLobbyName();
   }
-  
+
   //const lobbyName = generateLobbyName();
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   fetch(`${apiUrl}/api/lobby/create`, {
@@ -127,8 +148,25 @@ async function closeLobbyVisibility(code) {
   return code;
 }
 
-async function deleteLobby() {
-  // delete to api
+async function deleteLobby(code) {
+  try {
+    const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+    const response = fetch(`${apiUrl}/api/lobby/delete/${code}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ code }),
+    }).then(handleResponse);
+    // post to api
+    if (!response.ok) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error("Error deleting lobby", error);
+  }
 }
 
 // don't really need this..  the code is already going to be passed in the url
@@ -162,7 +200,6 @@ async function getPublicLobbies() {
     console.error("Error fetching public lobbies:", error);
   }
 }
-
 
 function getRandomInt(min, max) {
   const minCeiled = Math.ceil(min);

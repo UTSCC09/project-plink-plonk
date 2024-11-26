@@ -125,6 +125,28 @@ router.get("/:code", async (req, res) => {
 // Joining a lobby
 
 // Deleting a lobby
+router.delete("/delete/:code", async (req, res) =>{
+  const { code } = req.params;
+  try {
+    const lobbyCollection = await db.collection("lobbies");
+    const result = await lobbyCollection.deleteOne({ code });
+
+    if (result.deletedCount === 0) {
+      // No document matched the filter
+      return res.status(404).json({
+        message: `No lobby found with code: ${code}`,
+      });
+    }
+
+    res.status(200).json({
+      message: `Lobby with code ${code} deleted successfully.`,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error querying database :(" });
+  }
+})
 
 // Close lobby visiblity (when you)
 router.patch("/close/:code", async (req, res) => {

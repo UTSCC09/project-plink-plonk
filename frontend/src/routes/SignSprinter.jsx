@@ -1,7 +1,9 @@
 import { Outlet, Link, redirect } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Peer from "peerjs";
 import BackLink from "../components/BackLink";
 import { createLobby } from "../js/lobby.mjs";
+import { checkAuth } from "../js/lobby.mjs";
 
 export async function action({ request }) {
   // Parse form data
@@ -28,17 +30,33 @@ export async function action({ request }) {
 }
 
 export default function SignSprinter() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const logInValue = await checkAuth();  
+      console.log("here");
+      console.log(logInValue)
+      setIsLoggedIn(logInValue);   
+    };
+    checkAuthStatus();   
+  }, []);
+
   return (
     <div>
       <div>
         <h1>Sign Sprinter</h1>
         <BackLink />
       </div>
-      <div id="buttons">
-        <Link to={"./join"}>Join Lobby</Link>
-        <Link to={"./create"}>Create Lobby</Link>
-        <Link to={"./browse"}>View Lobbies</Link>
-      </div>
+      {isLoggedIn && (
+        <div id="buttons">
+          <Link to={"./join"}>Join Lobby</Link>
+          <Link to={"./create"}>Create Lobby</Link>
+          <Link to={"./browse"}>View Lobbies</Link>
+        </div>
+      )}
+      {!isLoggedIn && (
+        <div>You're not logged in, oops!</div>
+      )}
       <Outlet />
     </div>
   );

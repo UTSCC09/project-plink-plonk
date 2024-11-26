@@ -41,7 +41,7 @@ const Login = ({ onLogin }) => {
       setUsername('');
       setPassword('');
     }
-  };
+  }; 
 
   // const handleSignupClick = () => {
   //   navigate("/signup"); // Navigate to signup page

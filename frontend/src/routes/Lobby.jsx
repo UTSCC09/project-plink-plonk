@@ -6,6 +6,7 @@ import { useParams, useLoaderData, useLocation } from "react-router-dom";
 import BackLink from "../components/BackLink";
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
+import { deleteLobby, closeLobbyVisibility } from "../js/lobby.mjs";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
@@ -214,7 +215,9 @@ export default function Lobby({ hasWebcam = true }) {
     return () => {
       if (hostPeer.current && hostPeer.current.open) {
         console.log("Destroying peer connection");
+        document.cookie = `isHost=; max-age=0; path=/;`;
         hostPeer.current.destroy();
+        deleteLobby(lobbyId);
       }
 
       if (playerRef.current && playerRef.current.open) {
@@ -242,6 +245,7 @@ export default function Lobby({ hasWebcam = true }) {
   }
   function startGame(e) {
     e.target.style.visibility = "hidden";
+    closeLobbyVisibility(lobbyId);
     playGame();
   }
 
