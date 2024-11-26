@@ -141,26 +141,28 @@ async function deleteLobby() {
 
 async function getPublicLobbies() {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  fetch(`${apiUrl}/api/lobby/public`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  }).then(handleResponse);
 
-  const data = await response.json();
+  try {
+    const response = await fetch(`${apiUrl}/api/lobby/public`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
 
-  if (data && data.data) {
-      return data.data; // Return the list of public lobbies
-    } else {
-      throw new Error("Error getting data");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-  // get list of all public lobbies
-  const lobbies = [{ code: "test1" }, { code: "test2" }];
-  return lobbies;
+    const data = await response.json();
+    console.log(data); // Use or return the `data` as needed
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching public lobbies:", error);
+  }
 }
+
 
 function getRandomInt(min, max) {
   const minCeiled = Math.ceil(min);

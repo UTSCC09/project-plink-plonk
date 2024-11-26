@@ -4,6 +4,26 @@ import session from "express-session";
 
 const router = express.Router();
 
+// Get public lobbies
+router.get("/public", async (req, res) => {
+  try {
+    console.log("Getting public lobbies");
+    const lobbyCollection = await db.collection("lobbies");
+
+    const publicLobbies = await lobbyCollection.find({ visibility: "Public" }).toArray();
+    console.log(publicLobbies);
+
+    // Respond with the list of public lobbies
+    res.status(200).json({
+      message: "Got public lobbies",
+      data: publicLobbies,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error querying database :(" });
+  }
+});
+
 // Creating a new lobby
 router.post("/create", async (req, res) => {
   const { name, code, visibility } = req.body;
@@ -130,23 +150,5 @@ router.patch("/close/:code", async (req, res) => {
   }
 });
 
-// Get public lobbies
-router.get("/public", async (req, res) => {
-  try {
-    console.log("Getting public lobbies");
-    const lobbyCollection = await db.collection("lobbies");
-
-    const publicLobbies = await lobbyCollection.find({ visibility: "Public" }).toArray();
-
-    // Respond with the list of public lobbies
-    res.status(200).json({
-      message: "Got public lobbies",
-      data: publicLobbies,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error querying database :(" });
-  }
-});
 
 export default router;
