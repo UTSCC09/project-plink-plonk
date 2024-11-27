@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-//  ?? For Form component
 import { useNavigate } from 'react-router-dom';
+
+const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -12,7 +13,6 @@ const Login = ({ onLogin }) => {
     
     e.preventDefault();
     console.log({ username, password }); // DELETE Later, obvi
-    const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
     try {
       const response = await fetch(`${apiUrl}/api/login`, {
@@ -47,15 +47,22 @@ const Login = ({ onLogin }) => {
     navigate("/signup"); // Navigate to signup page
   };
 
+  const handleGoogleLogin = async () => {
+    window.location.href = `${apiUrl}/api/login/google`;
+  };
+  
   return (
+    <>
     <form onSubmit={submit}>
       <h2>Login</h2>
-      {error && <p>{error}</p>}   
-      <input type="text" placeholder="Username" value={username} onChange={(e)=>setUsername(e.target.value)} required/>
-      <input type="password" placeholder="Password"value={password} onChange={(e)=>setPassword(e.target.value)} required/>
+      {error && <p>{error}</p>}
+      <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <button type="submit">Login</button>
       <button onClick={handleSignupClick}>Signup</button>
     </form>
+    <button onClick={handleGoogleLogin} className="button">Sign in with Google</button>
+    </>
   );
 };
 

@@ -1,29 +1,17 @@
 services:
   # Nginx reverse proxy
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs
-      - ./vhost:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-
-  # nginx-proxy-acme:
-  #   image: nginxproxy/acme-companion
-  #   container_name: nginx-proxy-acme
+  # nginx-proxy:
+  #   image: jwilder/nginx-proxy
+  #   container_name: nginx-proxy
   #   restart: always
-  #   volumes_from:
-  #     - nginx-proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
   #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - ./acme:/etc/acme.sh
-  #   environment:
-  #     - DEFAULT_EMAIL=your-email@example.com
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+  #     - ./certs:/etc/nginx/certs
+  #     - ./vhost:/etc/nginx/vhost.d
+  #     - ./html:/usr/share/nginx/html
 
   # Frontend 
   frontend:
@@ -35,8 +23,8 @@ services:
     environment:
       - VIRTUAL_HOST=34.130.14.43
       - VIRTUAL_PORT=3000
-    env_file:
-      - ./frontend/.env  
+    ports:
+      - 3000:3000
 
   # Backend 
   backend:
@@ -49,5 +37,5 @@ services:
       - VIRTUAL_HOST=34.130.14.43
       - VIRTUAL_PATH=/api
       - VIRTUAL_PORT=4000 
-    env_file:
-      - ./backend/.env  
+    ports:
+      - 4000:4000

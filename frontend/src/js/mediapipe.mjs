@@ -19,7 +19,7 @@ async function createGestureRecognizer() {
   );
   gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
     baseOptions: {
-      modelAssetPath: "/src/models/gesture_recognizer.task"
+      modelAssetPath: "/models/sign_language_recognizer_25-04-2023.task"
     },
     runningMode: "VIDEO",
     numHands: 1

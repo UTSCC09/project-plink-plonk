@@ -4,13 +4,17 @@ import { dirname } from "path";
 import cors from 'cors';
 import userRoutes from './routes/user.js';
 import recordRoutes from './routes/record.js';
+import googleRoutes from './routes/google.js';
 import session from "express-session";
 import { parse, serialize } from "cookie";
+import passport from 'passport';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const app = express();
 
 // Serve static files from React app (to fix later)
-// app.use(express.static(path.join(__dirname, '../dist')));
+app.use(express.static(path.join(__dirname, '../dist')));
 
 app.use(express.json());
 app.use(cors({
@@ -44,9 +48,13 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Route handling
 app.use("/api/records", recordRoutes);
 app.use("/api/", userRoutes); // for login and signup
+app.use('/api', googleRoutes);
 
 // API route ex.
 app.get('/api/hello', (req, res) => {
@@ -54,9 +62,9 @@ app.get('/api/hello', (req, res) => {
 });
 
 // Catch-all route to serve React's index.html for all non-API routes .. apparently. fix later
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+// });
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

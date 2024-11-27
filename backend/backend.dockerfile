@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:lts-slim as build
+FROM node:20 AS build
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -7,7 +7,7 @@ COPY ./.env /app/.env
 
 RUN npm install
 
-FROM --platform=linux/amd64 node:lts-slim as main
+FROM node:20 AS main
 WORKDIR /app
 COPY --from=build /app /app
 EXPOSE 4000
