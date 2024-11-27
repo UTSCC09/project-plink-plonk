@@ -93,36 +93,50 @@ router.get("/:code", async (req, res) => {
   console.log("Checking for host:");
   console.log("Searching for lobby with code:", code);
 
+  const POLL_INTERVAL = 100; // Poll every 100ms
+  const TIMEOUT = 5000; // Timeout after 5 seconds
+  const startTime = Date.now();
+
   try {
     const lobbyCollection = await db.collection("lobbies");
 
-    //const allLobbies = await lobbyCollection.find().toArray();
-    //console.log("All Lobbies:", allLobbies);
+    // Polling loop
+    const pollForLobby = async () => {
+      const elapsedTime = Date.now() - startTime;
 
-    const lobbyCode = await lobbyCollection.findOne({ code });
-    if (!lobbyCode) {
-      // If no lobby code is found, respond with an error
-      return res.status(404).json({ error: "Lobby not found" });
-    }
+      // If timeout exceeded, return timeout response
+      if (elapsedTime > TIMEOUT) {
+        return res.status(404).json({ error: "Lobby not found within timeout" });
+      }
 
-    const host = lobbyCode.host;
-    console.log("The host is apparently:");
-    console.log(host);
+      // Check for lobby code in the database
+      const lobbyCode = await lobbyCollection.findOne({ code });
+      if (lobbyCode) {
+        const host = lobbyCode.host;
+        console.log("The host is apparently:", host);
 
-    if (req.username == host) {
-      return res
-        .status(200)
-        .json({ message: `User ${req.username} is indeed the host` });
-    }
+        if (req.username === host) {
+          return res
+            .status(200)
+            .json({ message: `User ${req.username} is indeed the host` });
+        }
 
-    return res.status(409).json({
-      message: `User ${req.username} is not the host`,
-    });
+        return res.status(409).json({
+          message: `User ${req.username} is not the host`,
+        });
+      }
+
+      // If not found, wait and poll again
+      setTimeout(pollForLobby, POLL_INTERVAL);
+    };
+
+    pollForLobby();
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error querying database :(" });
   }
 });
+
 
 // Joining a lobby
 
