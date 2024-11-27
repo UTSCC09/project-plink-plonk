@@ -14,9 +14,7 @@ export async function action({ request }) {
   try {
     const lobbyId = await createLobby(name, visibility);
 
-    document.cookie = `isHost=True; max-age=600000; path=/`;
-    
-    // need to add secure: true in production
+    //document.cookie = `isHost=True; max-age=600000; path=/`;
 
     // Redirect to the newly created lobby
     return redirect(`/play/${lobbyId}`); 

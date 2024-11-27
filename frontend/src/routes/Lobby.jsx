@@ -6,7 +6,7 @@ import { useParams, useLoaderData, useLocation } from "react-router-dom";
 import BackLink from "../components/BackLink";
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
-import { deleteLobby, closeLobbyVisibility } from "../js/lobby.mjs";
+import { deleteLobby, closeLobbyVisibility, checkIsHost } from "../js/lobby.mjs";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
@@ -14,8 +14,17 @@ const RACE_LENGTH = 10; // PLACEHOLDER
 
 export async function loader({ params }) {
   const { lobbyId } = params;
+  let isHost;
+  try{
+    isHost = await checkIsHost(lobbyId);
+  }
+  catch{
+    isHost = false;
+  }
+  console.log("Host value is..:");
+  console.log(isHost);
   const username = getCookie("username");
-  return { lobbyId, username };
+  return { lobbyId, username, isHost };
 }
 
 const getCookie = (name) => {
@@ -26,7 +35,7 @@ const getCookie = (name) => {
 };
 
 export default function Lobby({ hasWebcam = true }) {
-  const { lobbyId, username } = useLoaderData();
+  const { lobbyId, username, isHost } = useLoaderData();
 
   // PeerJS
   const hostPeer = useRef(null);
@@ -36,13 +45,13 @@ export default function Lobby({ hasWebcam = true }) {
   //const [connection, setConnection] = useState(null);
   const connections = useRef({});
 
-  let isHost = false;
-  if (getCookie("isHost") == "True") {
-    isHost = true;
-  }
+  // let isHost = false;
+  // if (getCookie("isHost") == "True") {
+  //   isHost = true;
+  // }
 
-  console.log("isHost value:");
-  console.log(isHost);
+  // console.log("isHost value:");
+  // console.log(isHost);
 
   const [playerList, setPlayerList] = useState([]);
   const [progressList, setProgressList] = useState([]);

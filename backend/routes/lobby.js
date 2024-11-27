@@ -90,7 +90,7 @@ router.get("/exist/:name/:code", async (req, res) => {
 // Check is Host
 router.get("/:code", async (req, res) => {
   const { code } = req.params;
-  console.log("Okay here:");
+  console.log("Checking for host:");
   console.log("Searching for lobby with code:", code);
 
   try {
@@ -106,6 +106,8 @@ router.get("/:code", async (req, res) => {
     }
 
     const host = lobbyCode.host;
+    console.log("The host is apparently:");
+    console.log(host);
 
     if (req.username == host) {
       return res
@@ -113,8 +115,8 @@ router.get("/:code", async (req, res) => {
         .json({ message: `User ${req.username} is indeed the host` });
     }
 
-    res.status(409).json({
-      message: `User ${req.username}is not the host`,
+    return res.status(409).json({
+      message: `User ${req.username} is not the host`,
     });
   } catch (err) {
     console.error(err);
