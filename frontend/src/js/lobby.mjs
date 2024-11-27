@@ -26,7 +26,26 @@ function handleResponse(res) {
   return res.json();
 }
 
-const firstWordBank = ["Slippery", "Yellow", "Yummy", "Funny"];
+const firstWordBank = [
+  "Slippery",
+  "Yellow",
+  "Yummy",
+  "Funny",
+  "Chunky",
+  "Cheeky",
+  "Sassy",
+  "Goofy",
+  "Snazzy",
+  "Jiggly",
+  "Silly",
+  "Snuggly",
+  "Quirky",
+  "Cozy",
+  "Fluffy",
+  "Spunky",
+  "Feisty",
+  "Dizzy"
+];
 
 const secondWordBank = [
   "Banana",
@@ -35,6 +54,30 @@ const secondWordBank = [
   "Chicken",
   "Turkey",
   "Pineapple",
+  "Avocado",
+  "Pancake",
+  "Burrito",
+  "Noodle",
+  "Meatball",
+  "Dumpling",
+  "Cookie",
+  "Tofu",
+  "Cupcake",
+  "Sushi",
+  "Waffle",
+  "Bagel",
+  "Muffin",
+  "Cheesecake",
+  "Pudding",
+  "Taco",
+  "Jellybean",
+  "Marshmallow",
+  "Cabbage",
+  "Popcorn",
+  "Pretzel",
+  "Donut",
+  "Biscuit",
+  "Pickle"
 ];
 
 function generateLobbyName() {
