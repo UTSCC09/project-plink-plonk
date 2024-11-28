@@ -3,15 +3,15 @@ import passport from 'passport';
 import express from 'express';
 import db from "../db/connection.js";
 
-
 const router = express.Router();
+const frontend = process.env.FRONTEND;
 
 // Configure Google Strategy
 passport.use(new GoogleStrategy({
   clientID: '484810430458-q970ne7dlkemnnvm0evmhjh1ju0i9mpf.apps.googleusercontent.com',
   clientSecret: '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',
   // Hardcoded here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  callbackURL: 'https://signsprinters.duckdns.org/api/oauth2/redirect/google',
+  callbackURL: `http://localhost:4000/api/google/oauth2/redirect`,
 },
   async (accessToken, refreshToken, profile, done) => {
     console.log('Google OAuth response:', profile);
@@ -58,7 +58,7 @@ router.get('/oauth2/redirect',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     req.session.username = req.user.username; 
-    res.redirect('/');
+    res.redirect(frontend);
   }
 );
 
