@@ -50,11 +50,11 @@ passport.deserializeUser((user, done) => {
 });
 
 // Route to initiate authentication
-router.get('/login/google', passport.authenticate('google', {
+router.get('/login', passport.authenticate('google', {
   scope: ['email', 'profile']
 }));
 
-router.get('/oauth2/redirect/google', 
+router.get('/oauth2/redirect', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/');
