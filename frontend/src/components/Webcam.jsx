@@ -9,7 +9,7 @@ export default function Webcam({ currentSign, changeSign }) {
   useEffect(() => {
     // this may not be async even though it's supposed to be
     createGestureRecognizer();
-  });
+  }, []);
 
   function toggleCam() {
     if (isWebcamOn) {
@@ -33,7 +33,7 @@ export default function Webcam({ currentSign, changeSign }) {
     setIsWebcamOn(true);
   }
 
-  function disableCam() {
+  async function disableCam() {
     if (videoStream) {
       videoStream.getTracks().forEach((track) => {
         track.stop();
@@ -43,15 +43,12 @@ export default function Webcam({ currentSign, changeSign }) {
     setIsWebcamOn(false);
   }
 
-  function readSign() {
+  async function readSign() {
     predictWebcam(webcamVideo.current, mediapipeCallback);
   }
 
   async function mediapipeCallback(sign) {
-    if (sign != "None" && sign !== currentSign) {
-      console.log("old sign was ", currentSign, ", changed  to ", sign);
-      changeSign(sign);
-    }
+    changeSign(sign);
   }
 
   return (

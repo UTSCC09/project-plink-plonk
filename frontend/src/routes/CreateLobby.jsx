@@ -9,6 +9,7 @@ export default function CreateLobby() {
         id="code"
         placeholder="room name"
         autoComplete="off"
+        name="name"
         required
       />
       <input type="radio" id="private" name="visibility" value="Private" defaultChecked />

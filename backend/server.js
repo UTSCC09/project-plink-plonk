@@ -4,6 +4,7 @@ import { dirname } from "path";
 import cors from 'cors';
 import userRoutes from './routes/user.js';
 import recordRoutes from './routes/record.js';
+import lobbyRoutes from './routes/lobby.js';
 import googleRoutes from './routes/google.js';
 import session from "express-session";
 import { parse, serialize } from "cookie";
@@ -16,9 +17,11 @@ const app = express();
 // Serve static files from React app (to fix later)
 app.use(express.static(path.join(__dirname, '../dist')));
 
+const allowedOrigins = [process.env.FRONTEND, process.env.FRONTEND2, process.env.PROD];
+
 app.use(express.json());
 app.use(cors({
-  origin: process.env.FRONTEND, // Set this to the exact origin of your frontend
+  origin: allowedOrigins, // Set this to the exact origin of your frontend
   credentials: true // Allow credentials like cookies to be sent
 }));
 
@@ -53,6 +56,7 @@ app.use(passport.session());
 
 // Route handling
 app.use("/api/records", recordRoutes);
+app.use("/api/lobby", lobbyRoutes);
 app.use("/api/", userRoutes); // for login and signup
 app.use('/api', googleRoutes);
 
