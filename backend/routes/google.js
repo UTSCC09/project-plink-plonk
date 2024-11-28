@@ -41,7 +41,7 @@ passport.use(new GoogleStrategy({
 
 // Initialize passport session if needed (serialization/deserialization)
 passport.serializeUser((user, done) => {
-  req.session.username = user.username
+  // req.session.username = user.username // moved into the redirect fcn below
   done(null, user);
 });
 
@@ -57,6 +57,7 @@ router.get('/login', passport.authenticate('google', {
 router.get('/oauth2/redirect', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
+    req.session.username = req.user.username; 
     res.redirect('/');
   }
 );
