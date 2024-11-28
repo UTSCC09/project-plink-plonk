@@ -58,7 +58,7 @@ app.use(passport.session());
 app.use("/api/records", recordRoutes);
 app.use("/api/lobby", lobbyRoutes);
 app.use("/api/", userRoutes); // for login and signup
-app.use('/api', googleRoutes);
+app.use('/api/google/', googleRoutes);
 
 // API route ex.
 app.get('/api/hello', (req, res) => {

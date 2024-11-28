@@ -5,7 +5,7 @@ const uri = process.env.ATLAS_URI;
 const client = new MongoClient(uri, {
   ssl: true,
   tls: true,
-  tlsCAFile: '/app/db/isrgrootx1.pem',
+  tlsCAFile: './db/isrgrootx1.pem',
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
