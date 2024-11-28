@@ -20,9 +20,6 @@ services:
       context: ./frontend 
       dockerfile: frontend.dockerfile  
     restart: always
-    environment:
-      - VIRTUAL_HOST=34.130.14.43
-      - VIRTUAL_PORT=3000
     ports:
       - 3000:3000
 
@@ -33,9 +30,5 @@ services:
       context: ./backend 
       dockerfile: backend.dockerfile  
     restart: always
-    environment:
-      - VIRTUAL_HOST=34.130.14.43
-      - VIRTUAL_PATH=/api
-      - VIRTUAL_PORT=4000 
     ports:
       - 4000:4000
