@@ -131,3 +131,20 @@ button:focus-visible {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+
+#lobby-chat {
+  border: 1px solid #ccc;
+  height: 300px;
+  overflow-y: auto;  
+  padding: 10px;
+  margin-bottom: 10px;
+
+  max-height: 80vh;  
+  overflow-y: scroll; 
+}
+
+#chat-input{
+  width: 80%;
+  margin-right: "10px"
+}

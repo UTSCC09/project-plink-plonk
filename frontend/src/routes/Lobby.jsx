@@ -53,6 +53,7 @@ export default function Lobby({ hasWebcam = true }) {
 
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState("");
 
   // Mediapipe
   const [currentSign, setCurrentSign] = useState(null);
@@ -101,6 +102,7 @@ export default function Lobby({ hasWebcam = true }) {
                     { id: conn.peer, username: data.username },
                   ];
                 }
+
                 connections.current[conn.peer] = conn;
 
                 // Send the updated list to everyone except the first person
@@ -118,6 +120,7 @@ export default function Lobby({ hasWebcam = true }) {
                 });
                 return updatedList;
               });
+        
 
               setProgressList((prevProgressList) => {
                 const isAlreadyInList = prevProgressList.some(
@@ -172,7 +175,29 @@ export default function Lobby({ hasWebcam = true }) {
                 return updatedList;
               });
             } else {
-              setMessages((prev) => [...prev, `Opponent: ${data}`]);
+              // data.type == "message"
+              console.log("Got somebody's message")
+              setMessages((prev) => {
+                const updatedMessages = [
+                  ...prev,
+                  `${data.message}`,
+                ];
+                const currentPlayerList = playerList; 
+                console.log(currentPlayerList);
+                playerList.forEach((player, index) => {
+                  if (index !== 0) {
+                    const playerConnection = connections.current[player.id];
+                    if (playerConnection) {
+                      playerConnection.send({
+                        type: "message",
+                        messages: updatedMessages,
+                      });
+                      console.log("Sending message list to player");
+                    }
+                  }
+                });
+                return updatedMessages;
+              });
             }
           });
         });
@@ -216,8 +241,9 @@ export default function Lobby({ hasWebcam = true }) {
               setIsGameStarted(true);
               playGame();
             }, 3000);
-          } else if (data === "send-message") {
-            setMessages((prev) => [...prev, `Opponent: ${data}`]);
+          } else if (data.type === "message") {
+            console.log("received message list update");
+            setMessages(data.messages);
           } else {
             console.log("Received message:", data);
           }
@@ -354,6 +380,32 @@ export default function Lobby({ hasWebcam = true }) {
       });
   }
 
+  function sendMessage() {
+    if (!inputMessage.trim()) return;
+    const message = `${username}: ${inputMessage}`;
+    if (isHost) {
+      setMessages((prev) => {
+        const updatedMessages = [...prev, `${username}: ${inputMessage}`];
+        playerList.forEach((player, index) => {
+          if (index !== 0) {
+            const playerConnection = connections.current[player.id];
+            if (playerConnection) {
+              playerConnection.send({
+                type: "message",
+                messages: updatedMessages,
+              });
+            }
+          }
+        });
+        return updatedMessages;
+      });
+    } else {
+      // Send from guest to host
+      connRef.current.send({ type: "message", message: message });
+    }
+    setInputMessage("");
+  }
+
   return (
     <div>
       <BackLink />
@@ -414,9 +466,28 @@ export default function Lobby({ hasWebcam = true }) {
             <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
           </div>
         )}
-
-        {/* <PlayerList /> this isn't setup*/}
         {/* <Chat /> bonus */}
+        <div>
+          <h2>Lobby Chat</h2>
+          <div id="lobby-chat">
+            {messages.map((msg, index) => (
+              <p key={index}>{msg}</p>
+            ))}
+          </div>
+          <input
+            id="chat-input"
+            type="text"
+            placeholder="Type a message..."
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
       </div>
     </div>
   );
