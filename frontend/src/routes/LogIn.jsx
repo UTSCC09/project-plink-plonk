@@ -53,15 +53,15 @@ const Login = ({ onLogin }) => {
   
   return (
     <>
-    <form onSubmit={submit}>
-      <h2>Login</h2>
+    <form class="flex flex-col space-y-6" onSubmit={submit}>
+      <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
       {error && <p>{error}</p>}
-      <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Login</button>
+      <input class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-5 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-black-600 sm:text-sm/6" type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+      <input class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-black-600 sm:text-sm/6" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      <button class="w-full justify-center rounded-md bg-black-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600" type="submit">Login</button>
       {/* <button onClick={handleSignupClick}>Signup</button> */}
     </form>
-    <button onClick={handleGoogleLogin} className="button">Sign in with Google</button>
+    <button class="font-semibold text-indigo-600 hover:text-indigo-500" onClick={handleGoogleLogin} className="button">Sign in with Google</button>
     </>
   );
 };
