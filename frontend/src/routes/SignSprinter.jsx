@@ -42,7 +42,7 @@ export default function SignSprinter() {
   return (
     <div>
       <div>
-        <h1>Sign Sprinter</h1>
+        <h1 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Sign Sprinter</h1>
         <BackLink />
       </div>
       {isLoggedIn && (

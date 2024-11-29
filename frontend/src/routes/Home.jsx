@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Plink Plonk</h1>
+      <h1 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Plink Plonk</h1>
       <img 
       src="/motion.gif" 
       alt="Motion GIF" 
