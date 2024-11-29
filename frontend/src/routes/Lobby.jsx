@@ -6,7 +6,11 @@ import { useParams, useLoaderData, useLocation } from "react-router-dom";
 import BackLink from "../components/BackLink";
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
-import { deleteLobby, closeLobbyVisibility, checkIsHost } from "../js/lobby.mjs";
+import {
+  deleteLobby,
+  closeLobbyVisibility,
+  checkIsHost,
+} from "../js/lobby.mjs";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
@@ -15,10 +19,9 @@ const RACE_LENGTH = 10; // PLACEHOLDER
 export async function loader({ params }) {
   const { lobbyId } = params;
   let isHost;
-  try{
+  try {
     isHost = await checkIsHost(lobbyId);
-  }
-  catch{
+  } catch {
     isHost = false;
   }
   console.log("Host value is..:");
@@ -45,19 +48,11 @@ export default function Lobby({ hasWebcam = true }) {
   //const [connection, setConnection] = useState(null);
   const connections = useRef({});
 
-  // let isHost = false;
-  // if (getCookie("isHost") == "True") {
-  //   isHost = true;
-  // }
-
-  // console.log("isHost value:");
-  // console.log(isHost);
-
   const [playerList, setPlayerList] = useState([]);
   const [progressList, setProgressList] = useState([]);
 
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [messages, setMessages] = useState([0]);
+  const [messages, setMessages] = useState([]);
 
   // Mediapipe
   const [currentSign, setCurrentSign] = useState(null);
@@ -65,7 +60,7 @@ export default function Lobby({ hasWebcam = true }) {
   // Game
   const gameText = useRef(null);
   const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
-  const [gameProgress, setGameProgress] = useState(0);
+  const [gameProgress, setGameProgress] = useState(-1);
   const [question, setQuestion] = useState(null);
 
   // PeerJS + check Host
@@ -154,7 +149,7 @@ export default function Lobby({ hasWebcam = true }) {
                 return updatedList;
               });
             } else if (data.type == "progress-update") {
-              // Host gets an update from a player and sends it to everyone 
+              // Host gets an update from a player and sends it to everyone
               setProgressList((prevProgressList) => {
                 let user = prevProgressList.find(
                   (user) => user.username == data.username
@@ -210,9 +205,17 @@ export default function Lobby({ hasWebcam = true }) {
           } else if (data.type == "progress-update") {
             setProgressList(data.progressList);
             console.log("Got updated progress List");
-          } else if (data === "start-game") {
+          } else if (data.type === "start-game") {
             console.log("Game is starting!");
-            setIsGameStarted(true);
+            const gifElement = document.getElementById("game-gif");
+            gifElement.style.display = "block"; // Make the GIF visible
+            gifElement.src = "/countdown.gif";
+            setTimeout(() => {
+              gifElement.style.display = "none";
+              gifElement.src = "";
+              setIsGameStarted(true);
+              playGame();
+            }, 3000);
           } else if (data === "send-message") {
             setMessages((prev) => [...prev, `Opponent: ${data}`]);
           } else {
@@ -255,7 +258,33 @@ export default function Lobby({ hasWebcam = true }) {
   function startGame(e) {
     e.target.style.visibility = "hidden";
     closeLobbyVisibility(lobbyId);
-    playGame();
+    if (isHost) {
+      playerList.forEach((player, index) => {
+        if (index !== 0) {
+          const playerConnection = connections.current[player.id];
+          if (playerConnection) {
+            playerConnection.send({
+              type: "start-game",
+            });
+            console.log("Telling players the game is starting");
+          }
+        }
+      });
+    }
+    const gifElement = document.getElementById("game-gif");
+    gifElement.style.display = "block"; // Make the GIF visible
+    gifElement.src = "/countdown.gif";
+    setTimeout(() => {
+      gifElement.style.display = "block";
+      gifElement.src = "/countdown.gif?" + new Date().getTime();
+
+      setTimeout(() => {
+        gifElement.style.display = "none";
+        gifElement.src = "";
+        setIsGameStarted(true);
+        playGame();
+      }, 3000);
+    }, 1); // slight offset so everybody starts the same time LOL
   }
 
   function playGame() {
@@ -308,14 +337,21 @@ export default function Lobby({ hasWebcam = true }) {
   }
 
   function copyToClipboard(lobbyId) {
-    navigator.clipboard.writeText(lobbyId).then(
-      () => {
-        alert("Lobby ID copied to clipboard!");
-      },
-      (err) => {
+    navigator.clipboard
+      .writeText(lobbyId)
+      .then(() => {
+        const notification = document.createElement("div");
+        notification.textContent = "Lobby ID copied!";
+        notification.classList.add("notification");
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 1000);
+      })
+      .catch((err) => {
         console.error("Failed to copy text: ", err);
-      }
-    );
+      });
   }
 
   return (
@@ -356,15 +392,29 @@ export default function Lobby({ hasWebcam = true }) {
             {generateProblemText(question) +
               `\nYou are currently signing ${currentSign}`}
           </div>
-          <button onClick={startGame}>Start</button>
+
+          {isHost ? (
+            <button onClick={startGame}>Start</button>
+          ) : !isGameStarted ? (
+            <p>Waiting for host to start game..</p>
+          ) : (
+            <div></div>
+          )}
+          <img id="game-gif" />
         </div>
-        <Game
-          gameEnd={gameEnd}
-          gameProgress={gameProgress}
-          progressList={progressList}
-          username={username}
-        />
-        <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
+
+        {isGameStarted && (
+          <div>
+            <Game
+              gameEnd={gameEnd}
+              gameProgress={gameProgress}
+              progressList={progressList}
+              username={username}
+            />
+            <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
+          </div>
+        )}
+
         {/* <PlayerList /> this isn't setup*/}
         {/* <Chat /> bonus */}
       </div>

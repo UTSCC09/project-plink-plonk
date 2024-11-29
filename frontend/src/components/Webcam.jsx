@@ -56,8 +56,8 @@ export default function Webcam({ currentSign, changeSign }) {
       <video
         ref={webcamVideo}
         autoPlay
-        width="360px"
-        height="480px"
+        width="240px"
+        height="320px"
         onLoadedData={readSign}
       />
       <button onClick={toggleCam}>
