@@ -41,12 +41,14 @@ export default function Lobby({ hasWebcam = true }) {
   const { lobbyId, username, isHost } = useLoaderData();
 
   // PeerJS
+
+  // Host
   const hostPeer = useRef(null);
+  const connections = useRef({});
+
+  // Guest player
   const playerRef = useRef(null);
   const connRef = useRef(null);
-
-  //const [connection, setConnection] = useState(null);
-  const connections = useRef({});
 
   const [playerList, setPlayerList] = useState([]);
   const [progressList, setProgressList] = useState([]);
@@ -120,7 +122,6 @@ export default function Lobby({ hasWebcam = true }) {
                 });
                 return updatedList;
               });
-        
 
               setProgressList((prevProgressList) => {
                 const isAlreadyInList = prevProgressList.some(
@@ -176,13 +177,10 @@ export default function Lobby({ hasWebcam = true }) {
               });
             } else {
               // data.type == "message"
-              console.log("Got somebody's message")
+              console.log("Got somebody's message");
               setMessages((prev) => {
-                const updatedMessages = [
-                  ...prev,
-                  `${data.message}`,
-                ];
-                const currentPlayerList = playerList; 
+                const updatedMessages = [...prev, `${data.message}`];
+                const currentPlayerList = playerList;
                 console.log(currentPlayerList);
                 playerList.forEach((player, index) => {
                   if (index !== 0) {
@@ -351,6 +349,13 @@ export default function Lobby({ hasWebcam = true }) {
 
     if (gameProgress === gameEnd) {
       gameText.current.innerText = "You've won!";
+      const gifElement = document.getElementById("game-gif");
+      gifElement.style.display = "block"; // Make the GIF visible
+      gifElement.src = "/trophy.gif";
+      setTimeout(() => {
+        gifElement.style.display = "none";
+        gifElement.src = "";
+      }, 1000);
     } else {
       // Create next question
       let newQuestion = generateProblem();
@@ -443,6 +448,7 @@ export default function Lobby({ hasWebcam = true }) {
           <div ref={gameText}>
             {generateProblemText(question) +
               `\nYou are currently signing ${currentSign}`}
+            <img id="trophy-gif" />
           </div>
 
           {isHost ? (
@@ -463,9 +469,9 @@ export default function Lobby({ hasWebcam = true }) {
               progressList={progressList}
               username={username}
             />
-            <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
           </div>
         )}
+        <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
         {/* <Chat /> bonus */}
         <div>
           <h2>Lobby Chat</h2>
