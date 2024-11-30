@@ -10,7 +10,8 @@ export async function loader() {
 }
 
 export default function LobbyList() {
-  const { lobbies } = useLoaderData();
+  const { lobbies: initialLobbies } = useLoaderData();
+  const [lobbies, setLobbies] = useState(initialLobbies);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   useEffect(() => {
@@ -23,6 +24,14 @@ export default function LobbyList() {
     checkAuthStatus();   
   }, []);
 
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      const lobbies = await getPublicLobbies();
+      setLobbies(lobbies);  
+    }, 2500);  
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div id="lobbyList">
       <h2>Public Lobbies</h2>
@@ -33,7 +42,7 @@ export default function LobbyList() {
             {lobbies.map((lobby) => (
               <li key={lobby.code}>
                 <div>
-                  <Link to={`../${lobby.code}`}>{lobby.code}</Link>
+                  <Link to={`../${lobby.code}`}>{lobby.name}</Link>
                 </div>
               </li>
             ))}

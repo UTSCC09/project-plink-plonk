@@ -61,10 +61,7 @@ app.use('/api/google/', googleRoutes); // for OAuth login
 app.use("/api/", userRoutes); // for regular login and signup
 
 
-// API route ex.
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from Express!' });
-});
+
 
 // Catch-all route to serve React's index.html for all non-API routes .. apparently. fix later
 // app.get('*', (req, res) => {
