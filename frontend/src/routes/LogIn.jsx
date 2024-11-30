@@ -61,6 +61,7 @@ const Login = ({ onLogin }) => {
       <button class="w-full justify-center rounded-md bg-black-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600" type="submit">Login</button>
       {/* <button onClick={handleSignupClick}>Signup</button> */}
     </form>
+    <div class="mt-1"></div>
     <button class="font-semibold text-indigo-600 hover:text-indigo-500" onClick={handleGoogleLogin} className="button">Sign in with Google</button>
     </>
   );

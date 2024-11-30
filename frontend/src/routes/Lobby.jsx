@@ -197,7 +197,40 @@ export default function Lobby({ hasWebcam = true }) {
               }
 
               gameText.current.innerText = `Player ${data.username} won the game!`;
-            } else {
+            } else if(data.type== "leaving"){
+              // Update PlayerList, Progress List, Connections list. Send to everyone updated Player List and Progess list
+              setProgressList((prevProgressList) => {
+                const updatedProgressList = prevProgressList.filter(
+                  (player) => player.username !== data.username
+                );
+
+                delete connections.current[data.playerId];
+
+                setPlayerList((prevPlayerList) => {
+                  const updatedList = prevPlayerList.filter(
+                    (player) => player.username !== data.username
+                  );
+  
+                  // Send the updated list to everyone except the first person
+                  updatedList.forEach((player, index) => {
+                    if (index !== 0 && player.id !== data.playerId) {
+                      const playerConnection = connections.current[player.id];
+                      if (playerConnection) {
+                        playerConnection.send({
+                          type: "leaving",
+                          playerList: updatedList,
+                          progressList: updatedProgressList
+                        });
+                        console.log("sending updated lists except to the one that left");
+                      }
+                    }
+                  });
+                  return updatedList;
+                });
+                return updatedProgressList;
+              });
+            }
+            else {
               // data.type == "message"
               console.log("Got somebody's message");
 
@@ -265,7 +298,11 @@ export default function Lobby({ hasWebcam = true }) {
             setMessages(data.messages);
           } else if (data.type == "player-won") {
             gameText.current.innerText = `Player ${data.username} won the game!`;
-          } else {
+          } else if (data.type == "leaving"){
+            setPlayerList(data.playerList);
+            setProgressList(data.progressList);
+          }
+          else {
             console.log("Received message:", data);
           }
         });
@@ -454,17 +491,22 @@ export default function Lobby({ hasWebcam = true }) {
     setInputMessage("");
   }
 
-
-  function handleLeaveClick(){
+  function handleLeaveClick() {
     setShowPopup(true);
   }
 
-  function confirmLeave(){
-    navigate('..');
-    
+  function confirmLeave() {
+    if (!isHost) {
+      connRef.current.send({
+        type: "leaving",
+        username: username,
+        playerId: playerId,
+      });
+    }
+    navigate("..");
   }
 
-  function cancelLeave(){
+  function cancelLeave() {
     setShowPopup(false);
   }
 
@@ -476,8 +518,12 @@ export default function Lobby({ hasWebcam = true }) {
           <div className="popup-overlay">
             <div className="popup2">
               <p>Are you sure you want to leave the game?</p>
-              <button id="leave"onClick={confirmLeave}>Yes</button>
-              <button id="stay" onClick={cancelLeave}>I'll Stay</button>
+              <button id="leave" onClick={confirmLeave}>
+                Yes
+              </button>
+              <button id="stay" onClick={cancelLeave}>
+                I'll Stay
+              </button>
             </div>
           </div>
         )}
