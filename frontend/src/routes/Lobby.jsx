@@ -55,6 +55,7 @@ export default function Lobby({ hasWebcam = true }) {
 
   // Guest player
   const playerRef = useRef(null);
+  const playerId = useRef(null);
   const connRef = useRef(null);
 
   const [playerList, setPlayerList] = useState([]);
@@ -182,6 +183,18 @@ export default function Lobby({ hasWebcam = true }) {
                 });
                 return updatedList;
               });
+            } else if (data.type == "player-won") {
+              for (const key in connections.current) {
+                const playerConnection = connections.current[key];
+                if (playerConnection && key != data.playerId) {
+                  playerConnection.send({
+                    type: "player-won",
+                    username: data.username,
+                  });
+                }
+              }
+
+              gameText.current.innerText = `Player ${data.username} won the game!`;
             } else {
               // data.type == "message"
               console.log("Got somebody's message");
@@ -214,6 +227,7 @@ export default function Lobby({ hasWebcam = true }) {
 
       player.on("open", () => {
         console.log("Guest Peer ID:", player.id);
+        playerId.current = player.id;
         const conn = player.connect(lobbyId);
         if (!connRef.current) {
           connRef.current = conn;
@@ -227,13 +241,13 @@ export default function Lobby({ hasWebcam = true }) {
         });
 
         conn.on("data", (data) => {
-          if (data.type === "player-list") {
+          if (data.type == "player-list") {
             console.log("Got data, type is player-list");
             setPlayerList(data.playerList);
           } else if (data.type == "progress-update") {
             setProgressList(data.progressList);
             console.log("Got updated progress List");
-          } else if (data.type === "start-game") {
+          } else if (data.type == "start-game") {
             console.log("Game is starting!");
             const gifElement = document.getElementById("game-gif");
             gifElement.style.display = "block"; // Make the GIF visible
@@ -244,9 +258,11 @@ export default function Lobby({ hasWebcam = true }) {
               setIsGameStarted(true);
               playGame();
             }, 3000);
-          } else if (data.type === "message") {
+          } else if (data.type == "message") {
             console.log("received message list update");
             setMessages(data.messages);
+          } else if (data.type == "player-won") {
+            gameText.current.innerText = `Player ${data.username} won the game!`;
           } else {
             console.log("Received message:", data);
           }
@@ -361,6 +377,25 @@ export default function Lobby({ hasWebcam = true }) {
         gifElement.style.display = "none";
         gifElement.src = "";
       }, 1000);
+
+      if (!isHost) {
+        connRef.current.send({
+          type: "player-won",
+          username: username,
+          playerId: playerId,
+        });
+      }
+      if (isHost) {
+        for (const key in connections.current) {
+          const playerConnection = connections.current[key];
+          if (playerConnection) {
+            playerConnection.send({
+              type: "player-won",
+              username: username,
+            });
+          }
+        }
+      }
     } else {
       // Create next question
       let newQuestion = generateProblem();
@@ -412,7 +447,7 @@ export default function Lobby({ hasWebcam = true }) {
     } else {
       // Send from guest to host
       connRef.current.send({ type: "message", message: message });
-      console.log("sent message..")
+      console.log("sent message..");
     }
     setInputMessage("");
   }
