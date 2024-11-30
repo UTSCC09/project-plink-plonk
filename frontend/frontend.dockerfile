@@ -12,4 +12,4 @@ WORKDIR /app
 COPY --from=build /app /app
 EXPOSE 3000
 
-CMD ["npm","run","preview"]
+CMD ["npm","run","start"]
