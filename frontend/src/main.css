@@ -51,7 +51,21 @@ h1 {
 
 div {
   margin: 60px 0;
-  /* border: 1px black solid; */
+}
+
+.link-container{
+  display: flex;
+  justify-content: center;  
+}
+
+.link-container a{
+  padding: 15px; 
+}
+
+#buttons {
+  display: flex;
+  gap: 20px; 
+  justify-content: center;  
 }
 
 button {
@@ -95,7 +109,7 @@ button:focus-visible {
 
 .link-container {
   display: flex;
-  gap: 10px; /* Adjust the gap as needed */
+  gap: 10px;  
 }
 
 .popup {
@@ -114,6 +128,66 @@ button:focus-visible {
   align-items: center;
   font-size: 16px;
   font-weight: bold;
+}
+
+/* For when you press "back icon" in Lobby */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup2 {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+button {
+  background-color: #585ed0;  
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #878ce2;  
+}
+
+button:active {
+  background-color: #caccff;  
+  transform: scale(0.95);  
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 5px #cdcee8;
+}
+
+.popup2 button {
+  margin: 10px;
+  color:#ffffff
+}
+
+#stay{
+  color:#a1ffcd
+}
+
+#leave{
+  color:#fff1f1
 }
 
 .notification {
@@ -146,8 +220,6 @@ button:focus-visible {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
-
 
 #lobby-chat {
   border: 1px solid #ccc;

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
-import { useParams, useLoaderData, useLocation } from "react-router-dom";
+import { useParams, useLoaderData, useNavigate } from "react-router-dom";
 
 import { Outlet, Link, redirect } from "react-router-dom";
 
@@ -64,6 +64,8 @@ export default function Lobby({ hasWebcam = true }) {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
 
   // Mediapipe
   const [currentSign, setCurrentSign] = useState(null);
@@ -452,9 +454,34 @@ export default function Lobby({ hasWebcam = true }) {
     setInputMessage("");
   }
 
+
+  function handleLeaveClick(){
+    setShowPopup(true);
+  }
+
+  function confirmLeave(){
+    navigate('..');
+    
+  }
+
+  function cancelLeave(){
+    setShowPopup(false);
+  }
+
   return (
     <div>
-      <BackLink />
+      <div>
+        <button onClick={handleLeaveClick}>[Back Icon]</button>
+        {showPopup && (
+          <div className="popup-overlay">
+            <div className="popup2">
+              <p>Are you sure you want to leave the game?</p>
+              <button id="leave"onClick={confirmLeave}>Yes</button>
+              <button id="stay" onClick={cancelLeave}>I'll Stay</button>
+            </div>
+          </div>
+        )}
+      </div>
       <div>
         <h2>Sign Sprinter</h2>
         <div style={{ display: "flex", alignItems: "center" }}>
