@@ -17,7 +17,7 @@ const app = express();
 // Serve static files from React app (to fix later)
 app.use(express.static(path.join(__dirname, '../dist')));
 
-const allowedOrigins = [process.env.FRONTEND, process.env.FRONTEND2, process.env.PROD];
+const allowedOrigins = [process.env.FRONTEND, process.env.FRONTEND2, process.env.PROD, process.env.PROD2];
 
 app.use(express.json());
 app.use(cors({

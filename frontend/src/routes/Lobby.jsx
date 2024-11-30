@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import Peer from "peerjs";
 import { useParams, useLoaderData, useLocation } from "react-router-dom";
+
+import { Outlet, Link, redirect } from "react-router-dom";
 
 import BackLink from "../components/BackLink";
 import Game from "../components/Game";
@@ -10,6 +11,7 @@ import {
   deleteLobby,
   closeLobbyVisibility,
   checkIsHost,
+  checkAuth,
 } from "../js/lobby.mjs";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
@@ -20,6 +22,11 @@ export async function loader({ params }) {
   const { lobbyId } = params;
   let isHost;
   try {
+    const logInValue = await checkAuth();
+    console.log("We have login value:,", logInValue);
+    if (!logInValue) {
+      return redirect(`/`);
+    }
     isHost = await checkIsHost(lobbyId);
   } catch {
     isHost = false;
@@ -178,22 +185,20 @@ export default function Lobby({ hasWebcam = true }) {
             } else {
               // data.type == "message"
               console.log("Got somebody's message");
+
               setMessages((prev) => {
                 const updatedMessages = [...prev, `${data.message}`];
-                const currentPlayerList = playerList;
-                console.log(currentPlayerList);
-                playerList.forEach((player, index) => {
-                  if (index !== 0) {
-                    const playerConnection = connections.current[player.id];
-                    if (playerConnection) {
-                      playerConnection.send({
-                        type: "message",
-                        messages: updatedMessages,
-                      });
-                      console.log("Sending message list to player");
-                    }
+
+                for (const key in connections.current) {
+                  const playerConnection = connections.current[key];
+                  if (playerConnection) {
+                    playerConnection.send({
+                      type: "message",
+                      messages: updatedMessages,
+                    });
+                    console.log("Sending updated messages to connection:", key);
                   }
-                });
+                }
                 return updatedMessages;
               });
             }
@@ -407,6 +412,7 @@ export default function Lobby({ hasWebcam = true }) {
     } else {
       // Send from guest to host
       connRef.current.send({ type: "message", message: message });
+      console.log("sent message..")
     }
     setInputMessage("");
   }
