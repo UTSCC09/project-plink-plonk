@@ -19,6 +19,7 @@ export default function JoinLobby() {
         id="code"
         name="code"
         autoComplete="off"
+        placeholder="Enter Lobby Code!"
         required
       />
       <button type="submit">Go!</button>
