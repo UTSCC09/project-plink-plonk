@@ -15,7 +15,9 @@ router.get("/public", isAuthenticated, async (req, res) => {
     console.log("Getting public lobbies");
     const lobbyCollection = db.collection("lobbies");
 
-    const publicLobbies = await lobbyCollection.find({ visibility: "Public" }).toArray();
+    const publicLobbies = await lobbyCollection
+      .find({ visibility: "Public" })
+      .toArray();
     console.log(publicLobbies);
 
     // Respond with the list of public lobbies
@@ -64,7 +66,7 @@ router.post("/create", isAuthenticated, async (req, res) => {
 });
 
 // Check existing lobby
-router.get("/exist/:name/:code",  isAuthenticated, async (req, res) => {
+router.get("/exist/:name/:code", isAuthenticated, async (req, res) => {
   const { name, code } = req.params;
   try {
     const lobbyCollection = db.collection("lobbies");
@@ -111,7 +113,9 @@ router.get("/:code", isAuthenticated, async (req, res) => {
 
       // If timeout exceeded, return timeout response
       if (elapsedTime > TIMEOUT) {
-        return res.status(404).json({ error: "Lobby not found within timeout" });
+        return res
+          .status(404)
+          .json({ error: "Lobby not found within timeout" });
       }
 
       // Check for lobby code in the database
@@ -142,32 +146,37 @@ router.get("/:code", isAuthenticated, async (req, res) => {
   }
 });
 
-
 // Joining a lobby
 
 // Deleting a lobby
-router.delete("/delete/:code", isAuthenticated, async (req, res) =>{
+router.delete("/delete/:code", isAuthenticated, async (req, res) => {
   const { code } = req.params;
   try {
     const lobbyCollection = db.collection("lobbies");
-    const result = await lobbyCollection.deleteOne({ code });
+    const lobby = await lobbyCollection.findOne({ code });
 
-    if (result.deletedCount === 0) {
-      // No document matched the filter
-      return res.status(404).json({
-        message: `No lobby found with code: ${code}`,
-      });
+    if (!lobby) {
+      return res.status(404).json({ error: "Lobby not found" });
     }
 
-    res.status(200).json({
-      message: `Lobby with code ${code} deleted successfully.`,
-    });
+    if (lobby.host !== req.username) {
+      return res
+        .status(403)
+        .json({ error: "Access denied: You're not the host :p" });
+    }
 
+    const result = await lobbyCollection.deleteOne({ code });
+
+    if (result.deletedCount === 1) {
+      return res.json({ message: "Lobby deleted successfully" });
+    } else {
+      return res.status(500).json({ error: "Failed to delete lobby" });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error querying database :(" });
   }
-})
+});
 
 // Close lobby visiblity (when you)
 router.patch("/close/:code", isAuthenticated, async (req, res) => {
@@ -179,9 +188,21 @@ router.patch("/close/:code", isAuthenticated, async (req, res) => {
     //const allLobbies = await lobbyCollection.find().toArray();
     //console.log("All Lobbies:", allLobbies);
 
+    const lobby = await lobbyCollection.findOne({ code });
+
+    if (!lobby) {
+      return res.status(404).json({ error: "Lobby not found" });
+    }
+
+    if (lobby.host !== req.username) {
+      return res
+        .status(403)
+        .json({ error: "Access denied: You're not the host :p" });
+    }
+    
     await lobbyCollection.updateOne(
       { code }, // Filter to find the lobby
-      { $set: { visibility: "Private" } }  
+      { $set: { visibility: "Private" } }
     );
 
     res.status(200).json({
@@ -192,6 +213,5 @@ router.patch("/close/:code", isAuthenticated, async (req, res) => {
     res.status(500).json({ message: "Error querying database :(" });
   }
 });
-
 
 export default router;
