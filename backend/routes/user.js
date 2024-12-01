@@ -1,4 +1,4 @@
-import express from "express";
+import express, { application } from "express";
 import db from "../db/connection.js";
 import bcrypt from "bcrypt";
 import { parse, serialize } from "cookie";
@@ -6,10 +6,14 @@ import { parse, serialize } from "cookie";
 const router = express.Router();
 
 // later to-do: isAuthenticated check
+function isAuthenticated(req, res, next) {
+  if (!req.session.username) return res.status(401).end("Access denied :( ");
+  return next();
+}
 
 // User signup route
 router.post("/signup", async (req, res) => {
-  const { email, username, password } = req.body;
+  const { username, password } = req.body;
   // TODO: Add password hashing, validation, etc.
 
   try {
@@ -25,7 +29,7 @@ router.post("/signup", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = { email, username, password: hashedPassword };  
+    const newUser = { nickname: username, username, password: hashedPassword };  
     const result = await usersCollection.insertOne(newUser);
     res
       .status(201)
@@ -42,9 +46,8 @@ router.post("/signup", async (req, res) => {
 // User login route
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  // Logic for login (e.g., verify username and password)
   try {
-    const usersCollection = await db.collection("users");
+    const usersCollection = db.collection("users");
     const user = await usersCollection.findOne({ username });
 
     if (!user) {
@@ -53,7 +56,6 @@ router.post("/login", async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    // If password does not match
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -62,7 +64,7 @@ router.post("/login", async (req, res) => {
 
     res.setHeader(
       "Set-Cookie",
-      serialize("username", username, {
+      serialize("nickname", user.nickname, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       })
@@ -95,12 +97,37 @@ router.get("/signout", async (req, res) => {
 
   res.setHeader(
     "Set-Cookie",
-    serialize("username", "", {
+    serialize("nickname", "", {
       path: "/",
       maxAge: 0, // 1 week in number of seconds
     })
   );
   return res.status(200).json({ message: "User has been signed out" });
+});
+
+router.patch("/change-nickname", isAuthenticated, async (req, res) => {
+  const { nickname } = req.body;
+  try {
+    const usersCollection = db.collection("users");
+    const result = await usersCollection.updateOne({ username: req.session.username }, { $set: { nickname:nickname }});
+
+    res.setHeader(
+      "Set-Cookie",
+      serialize("nickname", nickname, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: "Nickname updated successfully!" });
+    } else {
+      res.status(400).json({ message: "Failed to update nickname!" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error changing nickname!" });
+  }
 });
 
 export default router;

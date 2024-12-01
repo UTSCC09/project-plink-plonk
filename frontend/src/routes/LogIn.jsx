@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../js/authentication.mjs'
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -10,29 +11,18 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate(); 
 
   const submit =  async (e) => {
-    
     e.preventDefault();
     console.log({ username, password }); // DELETE Later, obvi
+    const userData = { username, password };
 
     try {
-      const response = await fetch(`${apiUrl}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', 
-        },
-        body: JSON.stringify({ username, password }),
-        credentials: 'include',
-      });
+      const success = await login(userData);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data.message);
+      if (success) {
         onLogin = true;
-        navigate("/");
-
+        navigate("/"); 
       } else {
-        const errorData = await response.json();
-        setError(errorData.message);
+        setError('Login failed');
       }
     } catch (err) {
       console.error('Login failed:', err);

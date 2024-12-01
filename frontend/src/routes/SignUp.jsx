@@ -16,8 +16,8 @@ const SignUp = () => {
 
   const submit = async (e) => {
     e.preventDefault();
-    console.log({ email, username, password });
-    const userData = { email, username, password };
+    console.log({ username, password });
+    const userData = { username, password };
     const signup_status = await signup(userData);
     if (signup_status) {
       setShowSuccess(true);
@@ -51,13 +51,6 @@ const SignUp = () => {
       <form onSubmit={submit}>
         <h2>Signup</h2>
         {error && <p>{error}</p>}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
         <input
           type="text"
           placeholder="Username"

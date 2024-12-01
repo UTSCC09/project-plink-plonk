@@ -2,6 +2,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import passport from 'passport';
 import express from 'express';
 import db from "../db/connection.js";
+import { serialize } from "cookie";
 
 const router = express.Router();
 const frontend = process.env.FRONTEND;
@@ -18,13 +19,13 @@ passport.use(new GoogleStrategy({
     //User find or create here
     try {
       const usersCollection = await db.collection("users");
-      let user = await usersCollection.findOne({ googleId: profile.id });
+      let user = await usersCollection.findOne({ username: profile.id });
 
       if (!user) {
         user = {
-          googleId: profile.id,
+          username: profile.id,
           email: profile.emails[0].value,
-          username: profile.displayName,
+          nickname: profile.displayName,
         };
         // Insert new user into the database
         const result = await usersCollection.insertOne(user);
@@ -41,7 +42,6 @@ passport.use(new GoogleStrategy({
 
 // Initialize passport session if needed (serialization/deserialization)
 passport.serializeUser((user, done) => {
-  // req.session.username = user.username // moved into the redirect fcn below
   done(null, user);
 });
 
@@ -58,6 +58,15 @@ router.get('/oauth2/redirect',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     req.session.username = req.user.username; 
+
+    res.setHeader(
+      "Set-Cookie",
+      serialize("nickname", req.user.nickname, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    );
+
     res.redirect(frontend);
   }
 );

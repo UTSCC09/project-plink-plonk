@@ -1,7 +1,7 @@
 import "../main.css";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { logOut, onError } from "../js/authentication.mjs";
+import { logOut, changeNickname, onError } from "../js/authentication.mjs";
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../js/lobby.mjs";
 
@@ -31,15 +31,39 @@ export default function Home() {
   );
 }
 
+
 function LoggedIn() {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccessNickname, setShowSuccessNickname] = useState(false);
+  const [showNicknameInput, setShowNicknameInput] = useState(false);
+  const [newNickname, setNewNickname] = useState("");
  
+  async function handleChangeNickname(e) {
+    e.preventDefault(); 
+    try {
+      const result = await changeNickname(newNickname);
+      setShowNicknameInput(false); 
+      setShowSuccessNickname(true);
+      setNewNickname('');
+      setTimeout(() => {
+        setShowSuccessNickname(false);
+      }, 900);
+      console.log(result.message);
+    } catch (err) {
+      console.error("Failed to change nickname:", err.message);
+    }
+  }
 
   return (
     <div>
       {showSuccess && (
         <div className="popup">
           <p>Successfully logged out!</p>
+        </div>
+      )}
+      {showSuccessNickname && (
+        <div className="popup">
+          <p>Successfully changed nickname!</p>
         </div>
       )}
       <div className="link-container">
@@ -58,6 +82,23 @@ function LoggedIn() {
         >
           Log Out
         </Link>
+      </div>
+      <div>
+        {!showNicknameInput ? (
+          <button onClick={() => setShowNicknameInput(true)}>Click to Change Nickname</button>) : (
+          <div>
+            <form onSubmit={handleChangeNickname}>
+              <input
+                type="text"
+                placeholder="Enter new nickname"
+                value={newNickname}
+                onChange={(e) => setNewNickname(e.target.value)}
+                required
+              />
+              <button type="submit">Change Nickname</button>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

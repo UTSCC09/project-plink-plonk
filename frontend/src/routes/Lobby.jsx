@@ -33,7 +33,7 @@ export async function loader({ params }) {
   }
   console.log("Host value is..:");
   console.log(isHost);
-  const username = getCookie("username");
+  const username = decodeURIComponent(getCookie("nickname"));
   return { lobbyId, username, isHost };
 }
 
@@ -273,7 +273,7 @@ export default function Lobby({ hasWebcam = true }) {
 
         conn.on("open", () => {
           console.log("Connected to host with Guest Peer ID:", player.id);
-          conn.send({ type: "join-game", username: getCookie("username") });
+          conn.send({ type: "join-game", username: decodeURIComponent(getCookie("nickname")) });
           console.log("Sent data..");
         });
 
@@ -420,7 +420,7 @@ export default function Lobby({ hasWebcam = true }) {
       let conn = connRef.current;
       conn.send({
         type: "progress-update",
-        username: getCookie("username"),
+        username: decodeURIComponent(getCookie("nickname")),
         progress: gameProgress,
       });
     }
