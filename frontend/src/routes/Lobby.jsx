@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import { useParams, useLoaderData, useNavigate } from "react-router-dom";
+import { getCookie } from "../js/authentication.mjs";
 
 import { Outlet, Link, redirect } from "react-router-dom";
 
@@ -36,13 +37,6 @@ export async function loader({ params }) {
   const username = decodeURIComponent(getCookie("nickname"));
   return { lobbyId, username, isHost };
 }
-
-const getCookie = (name) => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-  return null;
-};
 
 export default function Lobby({ hasWebcam = true }) {
   const { lobbyId, username, isHost } = useLoaderData();

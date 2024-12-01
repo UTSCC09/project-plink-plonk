@@ -19,6 +19,13 @@ function handleResponse(res) {
   return res.json();
 }
 
+export const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return null;
+};
+
 export async function signup(userData) {
   const response = await fetch(`${apiUrl}/api/signup`, {
     method: "POST",
@@ -73,7 +80,6 @@ export async function changeNickname(newNickname) {
   }
 }
 
-
 export function logOut(success) {
   document.cookie = `lobbyId=; max-age=0; path=/;`;
   document.cookie = `isHost=; max-age=0; path=/;`;
@@ -86,3 +92,4 @@ export function logOut(success) {
     .then(success)
     .catch(onError);
 }
+

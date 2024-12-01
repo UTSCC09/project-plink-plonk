@@ -1,38 +1,46 @@
 import "../main.css";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { logOut, changeNickname, onError } from "../js/authentication.mjs";
+import { logOut, changeNickname, getCookie, onError } from "../js/authentication.mjs";
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../js/lobby.mjs";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [nickname, setNickname] = useState("");
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       const logInValue = await checkAuth();  
-      console.log("here");
-      console.log(logInValue)
       setIsLoggedIn(logInValue);   
+
+      if (logInValue) {
+        const storedNickname = decodeURIComponent(getCookie("nickname"));
+        setNickname(storedNickname);
+      }
     };
     checkAuthStatus();   
   }, []);
 
   return (
     <div>
-      <h1 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Plink Plonk</h1>
-      <img 
-      src="/motion.gif" 
-      alt="Motion GIF" 
-      style={{ width: "300px", height: "auto" }} 
-    />
-      {isLoggedIn ? <LoggedIn /> : <Public />}
+      <h1 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">
+        {isLoggedIn ? `Welcome Back, ${nickname}` : "Sign Sprinters"}
+      </h1>
+      <div className="flex justify-center my-4">
+        <img 
+        src="/motion.gif" 
+        alt="Motion GIF" 
+        className="w-72 h-auto" 
+        />
+      </div> 
+      {isLoggedIn ? <LoggedIn setNickname={setNickname} /> : <Public />}
     </div>
   );
 }
 
 
-function LoggedIn() {
+function LoggedIn({ setNickname }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showSuccessNickname, setShowSuccessNickname] = useState(false);
   const [showNicknameInput, setShowNicknameInput] = useState(false);
@@ -44,6 +52,7 @@ function LoggedIn() {
       const result = await changeNickname(newNickname);
       setShowNicknameInput(false); 
       setShowSuccessNickname(true);
+      setNickname(newNickname);
       setNewNickname('');
       setTimeout(() => {
         setShowSuccessNickname(false);

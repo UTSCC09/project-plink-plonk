@@ -4,11 +4,16 @@ import session from "express-session";
 
 const router = express.Router();
 
+function isAuthenticated(req, res, next) {
+  if (!req.session.username) return res.status(401).end("Access denied :( ");
+  return next();
+}
+
 // Get public lobbies
-router.get("/public", async (req, res) => {
+router.get("/public", isAuthenticated, async (req, res) => {
   try {
     console.log("Getting public lobbies");
-    const lobbyCollection = await db.collection("lobbies");
+    const lobbyCollection = db.collection("lobbies");
 
     const publicLobbies = await lobbyCollection.find({ visibility: "Public" }).toArray();
     console.log(publicLobbies);
@@ -25,10 +30,10 @@ router.get("/public", async (req, res) => {
 });
 
 // Creating a new lobby
-router.post("/create", async (req, res) => {
+router.post("/create", isAuthenticated, async (req, res) => {
   const { name, code, visibility } = req.body;
   try {
-    const lobbyCollection = await db.collection("lobbies");
+    const lobbyCollection = db.collection("lobbies");
 
     const existingLobby = await lobbyCollection.findOne({ code });
 
@@ -59,10 +64,10 @@ router.post("/create", async (req, res) => {
 });
 
 // Check existing lobby
-router.get("/exist/:name/:code", async (req, res) => {
+router.get("/exist/:name/:code",  isAuthenticated, async (req, res) => {
   const { name, code } = req.params;
   try {
-    const lobbyCollection = await db.collection("lobbies");
+    const lobbyCollection = db.collection("lobbies");
     const existingCode = await lobbyCollection.findOne({ code });
     const existingName = await lobbyCollection.findOne({ name });
 
@@ -88,7 +93,7 @@ router.get("/exist/:name/:code", async (req, res) => {
 });
 
 // Check is Host
-router.get("/:code", async (req, res) => {
+router.get("/:code", isAuthenticated, async (req, res) => {
   const { code } = req.params;
   console.log("Checking for host:");
   console.log("Searching for lobby with code:", code);
@@ -98,7 +103,7 @@ router.get("/:code", async (req, res) => {
   const startTime = Date.now();
 
   try {
-    const lobbyCollection = await db.collection("lobbies");
+    const lobbyCollection = db.collection("lobbies");
 
     // Polling loop
     const pollForLobby = async () => {
@@ -141,10 +146,10 @@ router.get("/:code", async (req, res) => {
 // Joining a lobby
 
 // Deleting a lobby
-router.delete("/delete/:code", async (req, res) =>{
+router.delete("/delete/:code", isAuthenticated, async (req, res) =>{
   const { code } = req.params;
   try {
-    const lobbyCollection = await db.collection("lobbies");
+    const lobbyCollection = db.collection("lobbies");
     const result = await lobbyCollection.deleteOne({ code });
 
     if (result.deletedCount === 0) {
@@ -165,11 +170,11 @@ router.delete("/delete/:code", async (req, res) =>{
 })
 
 // Close lobby visiblity (when you)
-router.patch("/close/:code", async (req, res) => {
+router.patch("/close/:code", isAuthenticated, async (req, res) => {
   const { code } = req.params;
 
   try {
-    const lobbyCollection = await db.collection("lobbies");
+    const lobbyCollection = db.collection("lobbies");
 
     //const allLobbies = await lobbyCollection.find().toArray();
     //console.log("All Lobbies:", allLobbies);
