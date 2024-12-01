@@ -198,7 +198,7 @@ export default function Lobby({ hasWebcam = true }) {
               }
 
               gameText.current.innerText = `Player ${data.username} won the game!`;
-            } else if(data.type== "leaving"){
+            } else if (data.type == "leaving") {
               // Update PlayerList, Progress List, Connections list. Send to everyone updated Player List and Progess list
               setProgressList((prevProgressList) => {
                 const updatedProgressList = prevProgressList.filter(
@@ -211,7 +211,7 @@ export default function Lobby({ hasWebcam = true }) {
                   const updatedList = prevPlayerList.filter(
                     (player) => player.username !== data.username
                   );
-  
+
                   // Send the updated list to everyone except the first person
                   updatedList.forEach((player, index) => {
                     if (index !== 0 && player.id !== data.playerId) {
@@ -220,9 +220,11 @@ export default function Lobby({ hasWebcam = true }) {
                         playerConnection.send({
                           type: "leaving",
                           playerList: updatedList,
-                          progressList: updatedProgressList
+                          progressList: updatedProgressList,
                         });
-                        console.log("sending updated lists except to the one that left");
+                        console.log(
+                          "sending updated lists except to the one that left"
+                        );
                       }
                     }
                   });
@@ -230,8 +232,7 @@ export default function Lobby({ hasWebcam = true }) {
                 });
                 return updatedProgressList;
               });
-            }
-            else {
+            } else {
               // data.type == "message"
               console.log("Got somebody's message");
 
@@ -299,17 +300,16 @@ export default function Lobby({ hasWebcam = true }) {
             setMessages(data.messages);
           } else if (data.type == "player-won") {
             gameText.current.innerText = `Player ${data.username} won the game!`;
-          } else if (data.type == "leaving"){
+          } else if (data.type == "leaving") {
             setPlayerList(data.playerList);
             setProgressList(data.progressList);
-          } else if (data.type == "host-leaving"){
-              setHostLeaving(true);
-              playerRef.current.destroy();
-              setTimeout(()=> {
-                navigate("..");
-              }, 1300);
-          }
-          else {
+          } else if (data.type == "host-leaving") {
+            setHostLeaving(true);
+            playerRef.current.destroy();
+            setTimeout(() => {
+              navigate("..");
+            }, 1300);
+          } else {
             console.log("Received message:", data);
           }
         });
@@ -339,6 +339,40 @@ export default function Lobby({ hasWebcam = true }) {
       playGame();
     }
   }, [currentSign]);
+
+  useEffect(() => {
+    const cleanUpPeer = () => {
+      if (playerRef.current) {
+        connRef.current.send({
+          type: "leaving",
+          username: username,
+          playerId: playerId,
+        });
+        playerRef.current.destroy();
+      }
+
+      if (isHost) {
+        for (const key in connections.current) {
+          const playerConnection = connections.current[key];
+          if (playerConnection) {
+            playerConnection.send({
+              type: "host-leaving",
+            });
+          }
+        }
+        deleteLobby(lobbyId);
+        hostPeer.current.destroy();
+      }
+    };
+
+    window.addEventListener("beforeunload", cleanUpPeer);
+    window.addEventListener("unload", cleanUpPeer); // Fallback for browsers that support it
+
+    return () => {
+      window.removeEventListener("beforeunload", cleanUpPeer);
+      window.removeEventListener("unload", cleanUpPeer);
+    };
+  }, []);
 
   function sendProgress(message) {
     if (connection && connection.open) {
@@ -514,7 +548,7 @@ export default function Lobby({ hasWebcam = true }) {
       playerRef.current.destroy();
     }
 
-    if (isHost){
+    if (isHost) {
       for (const key in connections.current) {
         const playerConnection = connections.current[key];
         if (playerConnection) {
@@ -553,9 +587,7 @@ export default function Lobby({ hasWebcam = true }) {
       </div>
       <div>
         {hostLeaving && (
-          <div className="popup2">
-            Sorry, the host is destroying this game.
-          </div>
+          <div className="popup2">Sorry, the host is destroying this game.</div>
         )}
       </div>
       <div>
