@@ -6,8 +6,6 @@ export async function loader({ request }) {
   if (!code) {
     return null;
   }
-
-  //const lobby = await getLobby(code);
   return replace(`/play/${code}`)
 }
 

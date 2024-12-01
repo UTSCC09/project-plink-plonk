@@ -29,10 +29,6 @@ passport.use(new GoogleStrategy({
         };
         // Insert new user into the database
         const result = await usersCollection.insertOne(user);
-
-        console.log("New user created and inserted into DB:");
-        console.log(user);
-        console.log("MongoDB insert result:", result);
       }
       return done(null, user);
     } catch (error) {
