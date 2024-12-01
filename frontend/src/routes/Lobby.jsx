@@ -57,6 +57,7 @@ export default function Lobby({ hasWebcam = true }) {
   const playerRef = useRef(null);
   const playerId = useRef(null);
   const connRef = useRef(null);
+  const [hostLeaving, setHostLeaving] = useState(false);
 
   const [playerList, setPlayerList] = useState([]);
   const [progressList, setProgressList] = useState([]);
@@ -301,6 +302,12 @@ export default function Lobby({ hasWebcam = true }) {
           } else if (data.type == "leaving"){
             setPlayerList(data.playerList);
             setProgressList(data.progressList);
+          } else if (data.type == "host-leaving"){
+              setHostLeaving(true);
+              playerRef.current.destroy();
+              setTimeout(()=> {
+                navigate("..");
+              }, 1300);
           }
           else {
             console.log("Received message:", data);
@@ -503,6 +510,22 @@ export default function Lobby({ hasWebcam = true }) {
         playerId: playerId,
       });
     }
+    if (playerRef.current) {
+      playerRef.current.destroy();
+    }
+
+    if (isHost){
+      for (const key in connections.current) {
+        const playerConnection = connections.current[key];
+        if (playerConnection) {
+          playerConnection.send({
+            type: "host-leaving",
+          });
+        }
+      }
+      deleteLobby(lobbyId);
+      hostPeer.current.destroy();
+    }
     navigate("..");
   }
 
@@ -525,6 +548,13 @@ export default function Lobby({ hasWebcam = true }) {
                 I'll Stay
               </button>
             </div>
+          </div>
+        )}
+      </div>
+      <div>
+        {hostLeaving && (
+          <div className="popup2">
+            Sorry, the host is destroying this game.
           </div>
         )}
       </div>
