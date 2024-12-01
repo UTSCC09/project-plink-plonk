@@ -18,18 +18,21 @@ function handleResponse(res) {
   return res.json();
 }
 
-export function signup(userData, fail, success) {
+export async function signup(userData) {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  fetch(`${apiUrl}/api/signup`, {
+  const response = await fetch(`${apiUrl}/api/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(userData),
-  })
-    .then(handleResponse)
-    .then(success)
-    .catch(fail);
+  });
+
+  if (response.ok) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export function logOut(success) {
@@ -39,7 +42,7 @@ export function logOut(success) {
   fetch(`${apiUrl}/api/signout/`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
-    credentials: "include"
+    credentials: "include",
   })
     .then(handleResponse)
     .then(success)

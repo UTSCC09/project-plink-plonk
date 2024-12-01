@@ -11,20 +11,29 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showFailure, setShowFailure] = useState(false);
   const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
     console.log({ email, username, password });
     const userData = { email, username, password };
-    signup(userData, onError, () => {
+    const signup_status = await signup(userData);
+    if (signup_status) {
       setShowSuccess(true);
       setTimeout(() => {
         navigate("/");
       }, 1700);
-    });
+    }
+    if (!signup_status) {
+      setShowFailure(true);
+      setTimeout(() => {
+        setShowFailure(false);
+      }, 1100);
+    }
     setUsername("");
     setPassword("");
+    setEmail("");
   };
 
   return (
@@ -32,6 +41,11 @@ const SignUp = () => {
       {showSuccess && (
         <div className="popup">
           <p>Successfully signed up, login now!</p>
+        </div>
+      )}
+      {showFailure && (
+        <div className="popup">
+          <p>Oops! Username already taken</p>
         </div>
       )}
       <form onSubmit={submit}>
