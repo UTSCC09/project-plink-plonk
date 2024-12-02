@@ -11,7 +11,7 @@ import { deleteLobby, closeLobbyVisibility } from "../js/lobby.mjs";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
 export default function Host({ lobbyId, username }) {
-  let RACE_LENGTH = 9; // PLACEHOLDER
+  let RACE_LENGTH = 10; // PLACEHOLDER
   const hostPeer = useRef(null);
   const connections = useRef({});
 
@@ -400,7 +400,7 @@ export default function Host({ lobbyId, username }) {
     }
     setWebcamKey((prevKey) => prevKey + 1);
     setWinnerMessage(null);
-    setGameEnd(10);
+    setGameEnd(9);
   }
 
   return (

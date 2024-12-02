@@ -12,7 +12,7 @@ import Chat from "../components/Chat";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
 export default function Player({ lobbyId, username }) {
-  let RACE_LENGTH = 9; // PLACEHOLDER
+  let RACE_LENGTH = 10; // PLACEHOLDER
   // Guest player
   const playerRef = useRef(null);
   const playerId = useRef(null);
