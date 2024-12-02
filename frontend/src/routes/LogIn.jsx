@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { login } from '../js/authentication.mjs'
+import { useState } from 'react';
+import { Form, useNavigate, Link, redirect } from 'react-router-dom';
+import { login, checkAuth } from '../js/authentication.mjs'
 import BackLink from "../components/BackLink";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+
+export async function loader() {
+  const isLoggedIn = await checkAuth();
+  if (isLoggedIn) {
+    return redirect("/home");
+  }
+  return null;
+}
 
 export default function LogIn() {
   const [message, setMessage] = useState("");
@@ -16,17 +24,10 @@ export default function LogIn() {
     const password = e.target.password.value;
     const userData = { username, password };
 
-    try {
-      const success = await login(userData);
-      console.log(success);
-      if (success) {
-        navigate("/"); 
-      } else {
-        e.target.reset();
-        setMessage('Login failed');
-      }
-    } catch (err) {
-      console.error('Login failed:', err);
+    const success = await login(userData);
+    if (success) {
+      return navigate("/"); 
+    } else {
       e.target.reset();
       setMessage('Login failed');
     }
@@ -35,9 +36,9 @@ export default function LogIn() {
   return (
     <>
       <BackLink />
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 items-center mb-20">
+      <Form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center mb-20">
         <h2>Log In</h2>
-        {message && <h3>{message}</h3>}
+        {message && <div className="message">{message}</div>}
         <input
           type="text"
           placeholder="Username"
@@ -50,11 +51,12 @@ export default function LogIn() {
           type="password"
           placeholder="Password"
           name="password"
+          maxLength="100"
           autoComplete="off"
           required
         />
         <button type="submit" className="submitButton">Log In</button>
-      </form>
+      </Form>
       <Link to={`${apiUrl}/api/google/login`}>Log In with Google</Link>
     </>
   );

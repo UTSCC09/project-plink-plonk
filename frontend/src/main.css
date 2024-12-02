@@ -12,7 +12,7 @@ HAND SHADOW: cd7877
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1;
-  font-size: 14px;
+  font-size: 16px;
   color: #cd7877;
   font-synthesis: weight;
   text-rendering: optimizeLegibility;
@@ -38,18 +38,24 @@ h1 {
 h2 {
   font-size: 3em;
   font-weight: 900;
+  margin: 4px 0;
 }
 
 h3 {
+  font-size: 2em;
+  font-weight: 400;
+}
+
+.message {
   font-size: 1.5em;
   font-weight: 400;
-  line-height: 1;
 }
 
 a, .submitButton {
   font-weight: 600;
   font-size: 1.5em;
-  padding-bottom: 0.3em;
+  padding: 0.2em;
+  padding-top: 0;
   transition: color 0.3s ease-out;
 }
 
@@ -58,13 +64,38 @@ a:hover, .submitButton:hover {
   color: #e28b80;
 }
 
+th {
+  font-size: 1.5em;
+}
+
+td a {
+  font-size: 1.5em;
+  font-weight: 400;
+}
+
+td {
+  text-align: center;
+}
+
 input {
   border-radius: 0.375rem;
   padding: 0.35em 0.5em;
-  outline-style: solid;
-  outline-width: 5px;
-  outline-color: #e28b80;
+  outline: solid 5px #e28b80;
 }
+
+input[type=radio] {
+  outline: none;
+  width: 20px;
+  height: 20px;
+  accent-color: #cd7877;
+}
+
+label {
+  padding: 0 0.4em;
+  line-height: 1;
+}
+
+/* The above is kosher. */
 
 .popup {
   position: fixed;
@@ -111,11 +142,11 @@ input {
   color:#ffffff
 }
 
-#stay{
+#stay {
   color:#a1ffcd
 }
 
-#leave{
+#leave {
   color:#fff1f1
 }
 

@@ -4,17 +4,10 @@ export {
   getPublicLobbies,
   checkLobbyExist,
   checkIsHost,
-  closeLobbyVisibility,
-  checkAuth,
+  closeLobbyVisibility
 };
 
-/**
- * A Lobby has the following fields:
- *  code - string, not mutable
- *  name - string, editable
- *  members - [string of Users]
- *  host - one of the members that owns the room
- */
+const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 function handleResponse(res) {
   if (res.status < 200 && res.status >= 300) {
@@ -25,6 +18,14 @@ function handleResponse(res) {
 
   return res.json();
 }
+
+/**
+ * A Lobby has the following fields:
+ *  code - string, not mutable
+ *  name - string, editable
+ *  members - [string of Users]
+ *  host - one of the members that owns the room
+ */
 
 const firstWordBank = [
   "Slippery",
@@ -87,28 +88,7 @@ function generateLobbyName() {
   );
 }
 
-async function checkAuth() {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  let authorized = false;
-  try {
-    const response = await fetch(`${apiUrl}/api/check-auth`, {
-      method: "GET",
-      credentials: "include",
-    });
-    if (response.ok) {
-      authorized = true;
-    }
-  } catch (error) {
-    console.error("Error checking if user is authorized:", error);
-    return false; // Default to false on error
-  }
-
-  return authorized;
-}
-
 async function checkIsHost(code) {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-
   try {
     const response = await fetch(`${apiUrl}/api/lobby/${code}`, {
       method: "GET",
@@ -132,7 +112,6 @@ async function checkIsHost(code) {
 }
 
 async function checkLobbyExist(name, code) {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   fetch(`${apiUrl}/api/lobby/exist/${name}/${code}`, {
     method: "GET",
     headers: {
@@ -162,8 +141,6 @@ async function createLobby(name, visibility) {
     code = generateLobbyName();
   }
 
-  //const lobbyName = generateLobbyName();
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   fetch(`${apiUrl}/api/lobby/create`, {
     method: "POST",
     headers: {
@@ -178,7 +155,6 @@ async function createLobby(name, visibility) {
 }
 
 async function closeLobbyVisibility(code) {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   fetch(`${apiUrl}/api/lobby/close/${code}`, {
     method: "PATCH",
     headers: {
@@ -193,7 +169,6 @@ async function closeLobbyVisibility(code) {
 
 async function deleteLobby(code) {
   try {
-    const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
     const response = fetch(`${apiUrl}/api/lobby/delete/${code}`, {
       method: "DELETE",
       headers: {
@@ -221,8 +196,6 @@ async function deleteLobby(code) {
 // }
 
 async function getPublicLobbies() {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-
   try {
     const response = await fetch(`${apiUrl}/api/lobby/public`, {
       method: "GET",

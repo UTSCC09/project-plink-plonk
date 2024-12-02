@@ -1,4 +1,3 @@
-//import { getLobby } from "../js/lobby.mjs";
 import { Form, replace } from "react-router-dom";
 
 export async function loader({ request }) {
@@ -11,20 +10,19 @@ export async function loader({ request }) {
 
 export default function JoinLobby() {
   return (
-    <div>
-      <h3>Join</h3>
-      <Form method="get" action="/play/join" replace="true">
+    <>
+      {/* <h3>Join</h3> */}
+      <Form method="get" action="." replace="true" className="flex flex-col items-center gap-4">
         <input
           type="text"
           id="code"
           name="code"
           autoComplete="off"
-          placeholder="Enter Lobby Code!"
+          placeholder="Lobby Code"
           required
         />
-        
-        <button type="submit">Go!</button>
+        <button type="submit" className="submitButton">Join!</button>
       </Form>
-    </div>
+    </>
   );
 }

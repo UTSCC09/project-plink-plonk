@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import { useParams, useLoaderData, useNavigate } from "react-router-dom";
-import { getCookie } from "../js/authentication.mjs";
+import { getCookie, checkAuth } from "../js/authentication.mjs";
 
 import { Outlet, Link, redirect } from "react-router-dom";
 
@@ -11,8 +11,7 @@ import Webcam from "../components/Webcam";
 import {
   deleteLobby,
   closeLobbyVisibility,
-  checkIsHost,
-  checkAuth,
+  checkIsHost
 } from "../js/lobby.mjs";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
