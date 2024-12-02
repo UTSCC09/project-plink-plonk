@@ -2,50 +2,51 @@ import React, { useState } from "react";
 import BackLink from "../components/BackLink";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../js/authentication.mjs";
-import "../main.css";
 
-const SignUp = () => {
+export default function SignUp() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    e.target.reset();
 
     const username = e.target.username.value;
     const password = e.target.password.value;
     const userData = { username, password };
 
-    const signup_status = signup(userData);
+    const signup_status = await signup(userData);
     if (signup_status) {
       return navigate("/");
     } else {
-      setMessage("Oops! Username already taken");
+      e.target.reset();
+      setMessage("Username already taken");
     }
+    
   }
 
   return (
     <>
       <BackLink />
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center gap-6">
         <h2>Sign Up</h2>
         {message && <h3>{message}</h3>}
         <input
           type="text"
           placeholder="Username"
           name="username"
+          maxLength="20"
+          autoComplete="off"
           required
         />
         <input
           type="password"
           placeholder="Password"
           name="password"
+          autoComplete="off"
           required
         />
-        <button type="submit">Sign Up</button>
+        <button type="submit" className="submitButton">Sign Up</button>
       </form>
     </>
   );
-};
-
-export default SignUp;
+}
