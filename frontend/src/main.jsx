@@ -8,10 +8,12 @@ import {
 import './main.css'
 
 import ErrorPage from "./routes/ErrorPage";
-import Home from "./routes/Home";
+import Home, { loader as homeLoader } from "./routes/Home";
 import LogIn from "./routes/LogIn";
 import SignUp from "./routes/SignUp";
-import SignSprinter ,  { action as playAction }  from "./routes/SignSprinter";
+import Profile from "./routes/Profile";
+import SignSprinter, { action as playAction } from "./routes/SignSprinter";
+import { loader as playLoader } from "./routes/SignSprinter";
 import Lobby, { loader as lobbyLoader } from "./routes/Lobby";
 import JoinLobby, { loader as joinLoader } from "./routes/JoinLobby";
 import LobbyList, { loader as lobbyListLoader } from "./routes/LobbyList";
@@ -21,7 +23,8 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
+    loader: homeLoader
   },
   {
     path: "login",
@@ -37,6 +40,7 @@ const router = createBrowserRouter([
     path: "/play",
     element: <SignSprinter />,
     errorElement: <ErrorPage />,
+    loader: playLoader,
     action: playAction,
     children: [
       {
@@ -54,6 +58,11 @@ const router = createBrowserRouter([
         loader: lobbyListLoader
       }
     ]
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+    errorElement: <ErrorPage />
   },
   {
     path: "/play/:lobbyId",

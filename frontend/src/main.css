@@ -2,139 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+SIGN SPRINTER PALETTE:
+BACKGROUND: e3cdc8
+HAND: e28b80
+HAND SHADOW: cd7877
+*/
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  /* color-scheme: light dark; */
-  color: rgba(0, 0, 0, 0.87);
-  background-color: #e3cdc8;
-
-  font-synthesis: none;
+  line-height: 1;
+  font-size: 14px;
+  color: #cd7877;
+  font-synthesis: weight;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-/* Links */
-a {
-  font-weight: 600;
-  font-size: large;
-  color: #000000;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 2px;
-  transition: text-decoration-color 0.3s ease, color 0.3s ease;
-}
-
-a:hover {
-  color: #f2536e;
-  text-decoration-color: #f2536e;
-}
-
-/* inputs */
-input[type="text"], input[type="password"] {
-  display: block;
-  width: 100%;
-  border-radius: 0.375rem;
-  background-color: white;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-  font-size: 1rem;
-  outline-style: solid;
-  outline-width: 5px;
-  outline-offset: -1px;
-  outline-color: #e2e8f0;
-}
-
-body {
-  margin: 0;
+  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  place-items: center;
-  min-width: 320px;
+  gap: 0.5em;
+  background-color: #e3cdc8;
   min-height: 100vh;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  text-transform: uppercase;
+  font-size: 4em;
+  font-weight: 900;
 }
 
-div {
-  margin: 60px 0;
+h2 {
+  font-size: 3em;
+  font-weight: 900;
 }
 
-.link-container{
-  display: flex;
-  justify-content: center;  
+h3 {
+  font-size: 1.5em;
+  font-weight: 400;
+  line-height: 1;
 }
 
-.link-container a{
-  padding: 15px; 
+a {
+  font-weight: 600;
+  font-size: 1.5em;
+  /* padding: 0.4em; */
+  transition: color 0.3s ease-out;
 }
 
-#buttons {
-  display: flex;
-  gap: 20px; 
-  justify-content: center;  
+a:hover {
+  color: #e28b80;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  a {
-    padding: 20px;
-    border-radius: 10px;
-    border: solid 1px black;
-    background-color: #f9f9f9;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-.link-container {
-  display: flex;
-  gap: 10px;  
+input {
+  border-radius: 0.375rem;
+  padding: 0.35em 0.5em;
+  outline-style: solid;
+  outline-width: 5px;
+  outline-color: #e28b80;
 }
 
 .popup {
@@ -177,31 +105,6 @@ button:focus-visible {
   text-align: center;
 }
 
-button {
-  background-color: #46262d;  
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-  background-color: #0a0104;
-}
-
-button:active {
-  background-color: #caccff;  
-  transform: scale(0.95);  
-}
-
-button:focus {
-  outline: none;
-  box-shadow: 0 0 5px #cdcee8;
-}
-
 .popup2 button {
   margin: 10px;
   color:#ffffff
@@ -228,14 +131,6 @@ button:focus {
   padding: 10px;
   text-align: center;
   z-index: 15;
-}
-
-#game-gif {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 #trophy-gif {

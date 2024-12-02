@@ -4,9 +4,6 @@ const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 export function onError(err) {
   console.error("[error]", err);
-  const error_box = document.querySelector("#error_box");
-  error_box.innerHTML = err.message;
-  error_box.style.visibility = "visible";
 }
 
 function handleResponse(res) {

@@ -1,58 +1,57 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../js/authentication.mjs'
+import BackLink from "../components/BackLink";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState("");
   const navigate = useNavigate(); 
 
-  const submit =  async (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
-    console.log({ username, password }); // DELETE Later, obvi
+    e.target.reset();
+
+    const username = e.target.username.value;
+    const password = e.target.password.value;
     const userData = { username, password };
 
     try {
-      const success = await login(userData);
-
+      const success = login(userData);
       if (success) {
         onLogin = true;
         navigate("/"); 
       } else {
-        setError('Login failed');
+        setMessage('Login failed');
       }
     } catch (err) {
       console.error('Login failed:', err);
-      setError('Login failed');
-    } finally {
-      setUsername('');
-      setPassword('');
+      setMessage('Login failed');
     }
-  }; 
-
-  // const handleSignupClick = () => {
-  //   navigate("/signup"); // Navigate to signup page
-  // };
-
-  const handleGoogleLogin = async () => {
-    window.location.href = `${apiUrl}/api/google/login`;
   };
   
   return (
     <>
-    <form class="flex flex-col space-y-6" onSubmit={submit}>
-      <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
-      {error && <p>{error}</p>}
-      <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Login</button>
-      {/* <button onClick={handleSignupClick}>Signup</button> */}
-    </form>
-    <div class="mt-1"></div>
-    <button onClick={handleGoogleLogin} className="button">Sign in with Google</button>
+      <BackLink />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <h2>Login</h2>
+        {message && <h3>{message}</h3>}
+        <input
+          type="text"
+          placeholder="Username"
+          name="username"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          required
+        />
+        <button type="submit">Login</button>
+        <Link to={`${apiUrl}/api/google/login`}>Login with Google</Link>
+      </form>
     </>
   );
 };

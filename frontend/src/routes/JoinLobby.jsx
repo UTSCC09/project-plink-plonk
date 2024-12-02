@@ -11,16 +11,20 @@ export async function loader({ request }) {
 
 export default function JoinLobby() {
   return (
-    <Form method="get" action="/play/join" replace="true">
-      <input
-        type="text"
-        id="code"
-        name="code"
-        autoComplete="off"
-        placeholder="Enter Lobby Code!"
-        required
-      />
-      <button type="submit">Go!</button>
-    </Form>
+    <div>
+      <h3>Join</h3>
+      <Form method="get" action="/play/join" replace="true">
+        <input
+          type="text"
+          id="code"
+          name="code"
+          autoComplete="off"
+          placeholder="Enter Lobby Code!"
+          required
+        />
+        
+        <button type="submit">Go!</button>
+      </Form>
+    </div>
   );
 }
