@@ -34,6 +34,8 @@ export default function Host({ lobbyId, username }) {
   let [gameProgress, setGameProgress] = useState(-1);
   let [question, setQuestion] = useState(null);
   const [webcamKey, setWebcamKey] = useState(0);
+  const [winnerMessage, setWinnerMessage] = useState(null);
+
 
   useEffect(() => {
     const RACE_LENGTH = 10; // PLACEHOLDER
@@ -213,13 +215,6 @@ export default function Host({ lobbyId, username }) {
   // Progresses game if sign on camera matches question
   useEffect(() => {
     if (question && currentSign && currentSign === question.label) {
-      playGame();
-    }
-  }, [currentSign]);
-
-  // Progresses game if sign on camera matches question
-  useEffect(() => {
-    if (question && currentSign && currentSign === question.label) {
       console.log(
         `Question is ${question.label}, sign is ${currentSign}, so we move`
       );
@@ -304,7 +299,7 @@ export default function Host({ lobbyId, username }) {
 
     console.log("Game progress is:", gameProgress);
     if (gameProgress === gameEnd) {
-      gameText.current.innerText = "You've won!";
+      setWinnerMessage(`You won the game!`);
       const gifElement = document.getElementById("game-gif");
       gifElement.style.display = "block"; // Make the GIF visible
       gifElement.src = "/trophy.gif";
@@ -399,7 +394,6 @@ export default function Host({ lobbyId, username }) {
     setIsGameStarted(false);
     setMessages([]);
     setCurrentSign(null);
-    gameText.current.innerText = `${generateProblemText(question) + `\nYou are currently signing ${currentSign}`}`;
     setGameProgress(0);
     setQuestion(null);
     setShowReplay(false);
@@ -407,7 +401,8 @@ export default function Host({ lobbyId, username }) {
     if (button) {
       button.style.visibility = "visible"; // Show the button
     }
-    setWebcamKey(prevKey => prevKey + 1);
+    setWebcamKey((prevKey) => prevKey + 1);
+    setWinnerMessage(null);
   }
 
   return (
@@ -450,8 +445,11 @@ export default function Host({ lobbyId, username }) {
 
         <div>
           <div ref={gameText}>
-            {generateProblemText(question) +
-              `\nYou are currently signing ${currentSign}`}
+            {winnerMessage
+              ? winnerMessage
+              : `${generateProblemText(
+                  question
+                )}\nYou are currently signing ${currentSign}`}
             <img id="trophy-gif" />
           </div>
 
@@ -471,7 +469,11 @@ export default function Host({ lobbyId, username }) {
             />
           </div>
         )}
-        <Webcam key={webcamKey} currentSign={currentSign} changeSign={setCurrentSign} />
+        <Webcam
+          key={webcamKey}
+          currentSign={currentSign}
+          changeSign={setCurrentSign}
+        />
 
         <Chat
           messages={messages}
@@ -479,7 +481,6 @@ export default function Host({ lobbyId, username }) {
           setInputMessage={setInputMessage}
           sendMessage={sendMessage}
         />
-
       </div>
     </div>
   );
