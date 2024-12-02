@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getCookie } from "../js/authentication.mjs";
 
 import { redirect } from "react-router-dom";
@@ -18,47 +18,42 @@ export default function Player({ lobbyId, username }) {
   const connRef = useRef(null);
   const [hostLeaving, setHostLeaving] = useState(false);
 
-  const [playerList, setPlayerList] = useState([]);
-  const [progressList, setProgressList] = useState([]);
+  let [playerList, setPlayerList] = useState([]);
+  let [progressList, setProgressList] = useState([]);
 
-  const [isGameStarted, setIsGameStarted] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
+  let [isGameStarted, setIsGameStarted] = useState(false);
+  let [messages, setMessages] = useState([]);
+  let [inputMessage, setInputMessage] = useState("");
+  let [showPopup, setShowPopup] = useState(false);
+  let [showReplay, setShowReplay] = useState(false);
   const navigate = useNavigate();
 
   // Mediapipe
-  const [currentSign, setCurrentSign] = useState(null);
+  let [currentSign, setCurrentSign] = useState(null);
 
   // Game
-  const gameText = useRef(null);
-  const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
-  const [gameProgress, setGameProgress] = useState(-1);
-  const [question, setQuestion] = useState(null);
+  let gameText = useRef(null);
+  let [gameEnd, setGameEnd] = useState(RACE_LENGTH);
+  let [gameProgress, setGameProgress] = useState(-1);
+  let [question, setQuestion] = useState(null);
 
   useEffect(() => {
-    console.log("I'm a guest. let's set up a PeerJs connection to host");
     if (!playerRef.current) {
       playerRef.current = new Peer();
     }
     const player = playerRef.current;
 
     player.on("open", () => {
-      console.log("Guest Peer ID:", player.id);
       playerId.current = player.id;
       const conn = player.connect(lobbyId);
       if (!connRef.current) {
         connRef.current = conn;
       }
-      //setConnection(conn);
-
       conn.on("open", () => {
-        console.log("Connected to host with Guest Peer ID:", player.id);
         conn.send({
           type: "join-game",
           username: decodeURIComponent(getCookie("nickname")),
         });
-        console.log("Sent data..");
       });
 
       conn.on("data", (data) => {
@@ -80,6 +75,9 @@ export default function Player({ lobbyId, username }) {
           setMessages(data.messages);
         } else if (data.type == "player-won") {
           gameText.current.innerText = `Player ${data.username} won the game!`;
+          setTimeout(() => {
+            setShowReplay(true);
+          }, 2800);
         } else if (data.type == "leaving") {
           setPlayerList(data.playerList);
           setProgressList(data.progressList);
@@ -89,6 +87,15 @@ export default function Player({ lobbyId, username }) {
           setTimeout(() => {
             navigate("..");
           }, 1300);
+        } else if (data.type == "replay") {
+          setProgressList(data.progressList);
+          setIsGameStarted(false);
+          setMessages([]);
+          setCurrentSign(null);
+          gameText.current = null;
+          setGameProgress(-1);
+          setQuestion(null);
+          setShowReplay(false);
         } else {
           console.log("Received message:", data);
         }
@@ -194,10 +201,23 @@ export default function Player({ lobbyId, username }) {
     setShowPopup(false);
   }
 
+  function replay() {
+    connRef.current.send({
+      type: "replay",
+    });
+  }
+
   return (
     <div>
       <div>
         <button onClick={handleLeaveClick}>[Back Icon]</button>
+        {showReplay && (
+          <div className="popup2">
+            <button id="replay" onClick={replay}>
+              Replay game
+            </button>
+          </div>
+        )}
         {showPopup && (
           <div className="popup-overlay">
             <div className="popup2">
@@ -219,14 +239,11 @@ export default function Player({ lobbyId, username }) {
       </div>
 
       <div>
-        {/* Player List */}
         <div>
           <h3>Players in Lobby:</h3>
           <ul>
             {playerList.map((player) => (
-              <li key={player.id}>
-                Player `{player.username}`
-              </li>
+              <li key={player.id}>Player `{player.username}`</li>
             ))}
           </ul>
         </div>

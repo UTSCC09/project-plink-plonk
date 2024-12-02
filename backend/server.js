@@ -3,7 +3,6 @@ import path from 'path';
 import { dirname } from "path";
 import cors from 'cors';
 import userRoutes from './routes/user.js';
-import recordRoutes from './routes/record.js';
 import lobbyRoutes from './routes/lobby.js';
 import googleRoutes from './routes/google.js';
 import session from "express-session";
@@ -55,7 +54,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Route handling
-app.use("/api/records", recordRoutes);
 app.use("/api/lobby", lobbyRoutes);
 app.use('/api/google/', googleRoutes); // for OAuth login
 app.use("/api/", userRoutes); // for regular login and signup

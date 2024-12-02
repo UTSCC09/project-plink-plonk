@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import { useNavigate } from "react-router-dom";
-import { getCookie } from "../js/authentication.mjs";
 import { redirect } from "react-router-dom";
 
 import Game from "../components/Game";
@@ -15,23 +14,24 @@ export default function Host({ lobbyId, username }) {
   const hostPeer = useRef(null);
   const connections = useRef({});
 
-  const [playerList, setPlayerList] = useState([]);
-  const [progressList, setProgressList] = useState([]);
+  let [playerList, setPlayerList] = useState([]);
+  let [progressList, setProgressList] = useState([]);
 
-  const [isGameStarted, setIsGameStarted] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
-  const navigate = useNavigate();
+  let [isGameStarted, setIsGameStarted] = useState(false);
+  let [messages, setMessages] = useState([]);
+  let [inputMessage, setInputMessage] = useState("");
+  let [showPopup, setShowPopup] = useState(false);
+  let [showReplay, setShowReplay] = useState(false);
+  let navigate = useNavigate();
 
   // Mediapipe
-  const [currentSign, setCurrentSign] = useState(null);
+  let [currentSign, setCurrentSign] = useState(null);
 
   // Game
-  const gameText = useRef(null);
-  const [gameEnd, setGameEnd] = useState(RACE_LENGTH);
-  const [gameProgress, setGameProgress] = useState(-1);
-  const [question, setQuestion] = useState(null);
+  let gameText = useRef(null);
+  let [gameEnd, setGameEnd] = useState(RACE_LENGTH);
+  let [gameProgress, setGameProgress] = useState(-1);
+  let [question, setQuestion] = useState(null);
 
   useEffect(() => {
     const RACE_LENGTH = 10; // PLACEHOLDER
@@ -46,7 +46,6 @@ export default function Host({ lobbyId, username }) {
 
       // Listen for incoming connections
       host.on("connection", (conn) => {
-
         conn.on("data", (data) => {
           console.log("Data received by host:", data);
           if (data.type === "join-game") {
@@ -142,8 +141,10 @@ export default function Host({ lobbyId, username }) {
                   username: data.username,
                 });
               }
+              setTimeout(() => {
+                setShowReplay(true);
+              }, 2500);
             }
-
             gameText.current.innerText = `Player ${data.username} won the game!`;
           } else if (data.type == "leaving") {
             setProgressList((prevProgressList) => {
@@ -175,6 +176,8 @@ export default function Host({ lobbyId, username }) {
               });
               return updatedProgressList;
             });
+          } else if (data.type == "replay") {
+            replay();
           } else {
             // data.type == "message"
             setMessages((prev) => {
@@ -272,7 +275,7 @@ export default function Host({ lobbyId, username }) {
         setIsGameStarted(true);
         playGame();
       }, 3000);
-    }, 1); // slight offset so everybody starts the same time LOL
+    }, 1);
   }
 
   function playGame() {
@@ -316,6 +319,7 @@ export default function Host({ lobbyId, username }) {
           });
         }
       }
+      setShowReplay(true);
     } else {
       // Create next question
       let newQuestion = generateProblem();
@@ -370,10 +374,49 @@ export default function Host({ lobbyId, username }) {
     setShowPopup(false);
   }
 
+  function replay() {
+    setProgressList((prevProgressList) => {
+        const updatedProgressList = prevProgressList.map((entry) => ({
+          ...entry,
+          progress: 0,
+        }));
+
+    for (const key in connections.current) {
+        const playerConnection = connections.current[key];
+        if (playerConnection) {
+          playerConnection.send({
+            type: "replay",
+            progressList: updatedProgressList,
+          });
+        }
+      }
+      return updatedProgressList; 
+    });
+
+    setIsGameStarted(false);
+    setMessages([]);
+    setCurrentSign(null);
+    gameText.current = null;
+    setGameProgress(-1);
+    setQuestion(null);
+    setShowReplay(false);
+    const button = document.getElementById("startButton");
+    if (button) {
+      button.style.visibility = "visible";  // Show the button
+    }
+  }
+
   return (
     <div>
       <div>
         <button onClick={handleLeaveClick}>Go Back</button>
+        {showReplay && (
+          <div className="popup2">
+            <button id="replay" onClick={replay}>
+              Replay game
+            </button>
+          </div>
+        )}
         {showPopup && (
           <div className="popup-overlay">
             <div className="popup2">
@@ -409,7 +452,7 @@ export default function Host({ lobbyId, username }) {
             <img id="trophy-gif" />
           </div>
 
-          <button onClick={startGame}>Start</button>
+          <button id="startButton" onClick={startGame}>Start</button>
           <img id="game-gif" />
         </div>
 
