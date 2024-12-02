@@ -19,7 +19,6 @@ export async function loader({ params }) {
   let isHost;
   try {
     const logInValue = await checkAuth();
-    console.log("We have login value:,", logInValue);
     if (!logInValue) {
       return redirect(`/`);
     }
@@ -27,8 +26,6 @@ export async function loader({ params }) {
   } catch {
     isHost = false;
   }
-  console.log("Host value is..:");
-  console.log(isHost);
   const username = decodeURIComponent(getCookie("nickname"));
   return { lobbyId, username, isHost };
 }
