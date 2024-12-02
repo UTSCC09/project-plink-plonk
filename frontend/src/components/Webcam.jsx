@@ -59,9 +59,9 @@ export default function Webcam({ currentSign, changeSign }) {
         width="240px"
         height="320px"
         onLoadedData={readSign}
-        className={isWebcamOn ? "rounded-lg border-4 border-[#46262d]" : ""}
+        className={isWebcamOn ? "rounded-tr-lg border-4 border-[#46262d]" : ""}
       />
-      <button onClick={toggleCam}>
+      <button className="rounded-none  w-60 text-xl" onClick={toggleCam}>
         {isWebcamOn ? "Disable Webcam" : "Enable Webcam"}
       </button>
     </div>

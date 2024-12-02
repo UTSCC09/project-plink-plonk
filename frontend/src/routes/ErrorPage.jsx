@@ -6,7 +6,7 @@ export default function ErrorPage() {
   console.error(error);
 
   return (
-    <div id="error-page">
+    <div id="error-page" className="flex-center">
       <h1>Oops!</h1>
       <p>Sorry, a slippery banana must have gotten in the way.</p>
       <BackLink />

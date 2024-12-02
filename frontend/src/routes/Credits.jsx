@@ -1,7 +1,11 @@
+import BackLink from "../components/BackLink";
+
 export default function Credits() {
 
     return (
-        <div id="credits-page">
+        <div id="credits-page" className="flex-center">
+            <BackLink/>
+            <h2 className="mb-10">Credits</h2>
             <ul></ul>
             <li>Hand gif: https://dribbble.com/shots/10041649-Walking-Fingers</li>
             <li>Trophy pop-up and Count-down: https://lottiefiles.com/</li>

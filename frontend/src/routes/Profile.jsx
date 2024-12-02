@@ -32,23 +32,25 @@ export default function Profile() {
 
   return (
     <>
-      <BackLink />
-      <Form onSubmit={handleSubmit} className="flex flex-col items-center gap-4">
-        <h2>Profile</h2>
-        {message && <div className="message">{message}</div>}
-        {<p className="self-start">Current Nickname: {nickname}</p>}
-        <input
-          type="text"
-          placeholder="New nickname"
-          name="newName"
-          maxLength="20"
-          pattern="[\w\-]{2,20}"
-          title="2-20 alphanumeric or underscore and hyphen characters"
-          autoComplete="off"
-          required
-        />
-        <button type="submit" className="submitButton">Confirm</button>
-      </Form>
+      <div className="flex-center">
+        <BackLink />
+        <Form onSubmit={handleSubmit} className="flex flex-col items-center gap-4">
+          <h2>Profile</h2>
+          {message && <div className="message">{message}</div>}
+          {<p className="self-start text-lg">Current Nickname: {nickname}</p>}
+          <input
+            type="text"
+            placeholder="New nickname"
+            name="newName"
+            maxLength="20"
+            pattern="[\w\-]{2,20}"
+            title="2-20 alphanumeric or underscore and hyphen characters"
+            autoComplete="off"
+            required
+          />
+          <button type="submit" className="submitButton">Confirm</button>
+        </Form>
+      </div>
     </>
   );
 };

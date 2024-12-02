@@ -15,7 +15,7 @@ HAND SHADOW: cd7877
   font-size: 16px;
   color: rgba(0, 0, 0, 0.87);
   background-color: #e3cdc8;
-  color: #cd7877;
+  color: #793737;
   
   font-synthesis: weight;
   text-rendering: optimizeLegibility;
@@ -23,16 +23,18 @@ HAND SHADOW: cd7877
 
 #root {
   margin: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 0.5em;
   background-color: #e3cdc8;
   min-height: 100vh;
   width: 100%;
 }
 
+.flex-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 /* inputs */
 input[type="text"], input[type="password"] {
@@ -48,8 +50,20 @@ input[type="text"], input[type="password"] {
   outline-style: solid;
   outline-width: 5px;
   outline-offset: -1px;
-  outline-color: #e2e8f0;
+  outline-color: #adaeb1;
   max-width: 300px;
+}
+
+input[type=radio] {
+  outline: none;
+  width: 20px;
+  height: 20px;
+  accent-color: #cd7877;
+}
+
+label {
+  padding: 0 0.4em;
+  line-height: 1;
 }
 
 body {
@@ -109,8 +123,7 @@ h3 {
 a, .submitButton {
   font-weight: 600;
   font-size: 1.5em;
-  padding: 0.2em;
-  padding-top: 0;
+  padding: 0.5em;
   transition: color 0.3s ease-out;
 }
 
@@ -131,6 +144,7 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
   max-width: 300px;
+  color: #ecd9d9;
 }
 
 
@@ -142,9 +156,9 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-a:hover, .submitButton:hover {
+.submitButton:hover {
   cursor: hover;
-  color: #e28b80;
+  color: #f2536e;
 }
 
 th {
@@ -159,26 +173,6 @@ td a {
 td {
   text-align: center;
 }
-
-input {
-  border-radius: 0.375rem;
-  padding: 0.35em 0.5em;
-  outline: solid 5px #e28b80;
-}
-
-input[type=radio] {
-  outline: none;
-  width: 20px;
-  height: 20px;
-  accent-color: #cd7877;
-}
-
-label {
-  padding: 0 0.4em;
-  line-height: 1;
-}
-
-/* The above is kosher. */
 
 .popup {
   position: fixed;
@@ -272,4 +266,28 @@ label {
 #chat-input{
   width: 80%;
   margin-right: "10px"
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+#lobby-chat::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #742834;
+}
+#lobby-chat::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #271919;
 }

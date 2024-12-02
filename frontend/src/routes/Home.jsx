@@ -15,17 +15,19 @@ export default function Home() {
 
   return (
     <>
-      <h1>Sign Sprinter</h1>
-      <h2>welcome, {nickname}</h2>
-      <div>
-        <img src="/motion.gif" alt="Motion GIF" className="h-80 w-auto" />
-      </div>
-      <div className="flex flex-row gap-6 items-center">
-        <Link to={"/play"}>Play</Link>
-        <Link to={"/profile"}>Change Nickname</Link>
-        <Link to={"/"} onClick={() => logOut()}>
-          Log Out
-        </Link>
+      <div className="flex-center">
+        <h1>Sign Sprinter</h1>
+        <h2>welcome, {nickname}</h2>
+        <div>
+          <img src="/motion.gif" alt="Motion GIF" className="h-80 w-auto" />
+        </div>
+        <div className="flex flex-row gap-6 items-center">
+          <Link to={"/play"}>Play</Link>
+          <Link to={"/profile"}>Change Nickname</Link>
+          <Link to={"/"} onClick={() => logOut()}>
+            Log Out
+          </Link>
+        </div>
       </div>
     </>
   );

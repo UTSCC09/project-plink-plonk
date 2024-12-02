@@ -10,7 +10,7 @@ export default function Game({
     return (
       <div className="flex items-center space-x-4">
         <span className="w-64 font-bold">{token}</span>
-        <div className="relative w-full bg-gray-200 h-6 rounded-md overflow-hidden">
+        <div className="relative w-full bg-gray-200 h-6 rounded-md overflow-hidden border-2 [border-color:#742834]">
         <div
             className={`absolute top-0 left-0 h-full transition-all ${
               isCurrentUser ? "bg-green-500" : "bg-red-500"

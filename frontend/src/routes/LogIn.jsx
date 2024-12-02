@@ -35,6 +35,7 @@ export default function LogIn() {
   
   return (
     <>
+    <div className='flex-center'>
       <BackLink />
       <Form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center mb-20">
         <h2>Log In</h2>
@@ -58,6 +59,7 @@ export default function LogIn() {
         <button type="submit" className="submitButton">Log In</button>
       </Form>
       <Link to={`${apiUrl}/api/google/login`}>Log In with Google</Link>
+    </div>
     </>
   );
 }

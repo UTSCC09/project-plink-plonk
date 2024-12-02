@@ -34,6 +34,7 @@ export default function SignUp() {
 
   return (
     <>
+    <div className="flex-center">
       <BackLink />
       <Form onSubmit={handleSubmit} className="flex flex-col items-center gap-4">
         <h2>Sign Up</h2>
@@ -58,6 +59,7 @@ export default function SignUp() {
         />
         <button type="submit" className="submitButton">Sign Up</button>
       </Form>
+    </div>
     </>
   );
 }

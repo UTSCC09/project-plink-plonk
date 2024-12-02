@@ -22,7 +22,7 @@ export default function CreateLobby() {
   return (
     <>
       {/* <h3>Create</h3> */}
-      <Form method="post" action="." className="flex flex-col items-center gap-1">
+      <Form method="post" action="." className="flex flex-col items-center">
         <input
           type="text"
           id="code"
@@ -33,7 +33,7 @@ export default function CreateLobby() {
           name="name"
           required
         />
-        <div className="flex justify-evenly w-full">
+        <div className="flex justify-evenly w-full m-0">
           <div className="flex items-center">
             <input type="radio" id="private" name="visibility" value="Private" defaultChecked />
             <label htmlFor="private">Private</label>

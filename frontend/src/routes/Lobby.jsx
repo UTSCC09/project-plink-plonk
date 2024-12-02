@@ -48,8 +48,8 @@ export default function Lobby({ hasWebcam = true }) {
   }
 
   return (
-    <div className="lobby-div">
-      <h2 className="font-display text-4xl font-extrabold md:text-4xl xl:text-5xl mb-10">
+    <div className="lobby-div text-xl">
+      <h2 className="font-display text-4xl font-extrabold md:text-4xl xl:text-5xl mb-10 text-center">
         Sign Sprinter
       </h2>
 
