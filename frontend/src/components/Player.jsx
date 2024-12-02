@@ -3,11 +3,11 @@ import Peer from "peerjs";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../js/authentication.mjs";
 
-import { redirect } from "react-router-dom";
-
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
 import Chat from "../components/Chat";
+import PlayerList from "../components/PlayerList";
+import BackLobby from "../components/BackLobby";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
@@ -220,45 +220,14 @@ export default function Player({ lobbyId, username }) {
 
   return (
     <div>
-      <div>
-        <button
-          className="absolute top-0 right-0 m-2"
-          onClick={handleLeaveClick}
-        >
-          <svg
-            width="30px"
-            height="30px"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z"
-              fill="#ecd9d9"
-            />
-          </svg>
-        </button>
-        {showReplay && (
-          <div className="flex-center">
-            <button id="replay" onClick={replay}>
-            Replay game
-            </button>
-          </div>
-        )}
-        {showPopup && (
-          <div className="popup-overlay">
-            <div className="popup2">
-              <p>Are you sure you want to leave the game?</p>
-              <button id="leave" onClick={confirmLeave}>
-                Yes
-              </button>
-              <button id="stay" onClick={cancelLeave}>
-                I'll Stay
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      <BackLobby
+        handleLeaveClick={handleLeaveClick}
+        showPopup={showPopup}
+        confirmLeave={confirmLeave}
+        cancelLeave={cancelLeave}
+        showReplay={showReplay}
+        replay={replay}
+      />
 
       <div>
         {hostLeaving && (
@@ -267,16 +236,7 @@ export default function Player({ lobbyId, username }) {
       </div>
 
       <div className="flex flex-col md:flex-row h-screen">
-        <div className="w-full md:w-1/4 p-4 ">
-          <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">
-            Players in Lobby:
-          </h3>
-          <ul>
-            {playerList.map((player) => (
-              <li key={player.id}>Player {player.username}</li>
-            ))}
-          </ul>
-        </div>
+        <PlayerList playerList={playerList} />
 
         <div className="w-full md:w-1/2 p-4 flex flex-col items-center min-w-[500px]">
           <div ref={gameText}>
@@ -287,6 +247,7 @@ export default function Player({ lobbyId, username }) {
                 )}\nYou are currently signing ${currentSign}`}
             <img id="trophy-gif" />
           </div>
+
           {!isGameStarted ? (
             <p>Waiting for host to start game..</p>
           ) : (
