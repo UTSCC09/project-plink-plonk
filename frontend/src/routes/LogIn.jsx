@@ -43,12 +43,12 @@ const Login = ({ onLogin }) => {
   
   return (
     <>
-    <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
-    <form class="flex flex-col space-y-6 justify-center" onSubmit={submit}>
+    <h2 className="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
+    <form className="space-y-6 justify-items-center mt-10" onSubmit={submit}>
       {error && <p>{error}</p>}
       <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
       <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Login</button>
+      <button type="submit" >Login</button>
       {/* <button onClick={handleSignupClick}>Signup</button> */}
     </form>
     <div class="mt-1"></div>

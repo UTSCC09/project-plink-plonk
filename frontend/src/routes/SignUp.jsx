@@ -48,8 +48,8 @@ const SignUp = () => {
           <p>Oops! Username already taken</p>
         </div>
       )}
-      <form onSubmit={submit}>
-        <h2>Signup</h2>
+      <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Signup</h2>
+      <form className="space-y-6 justify-items-center mt-10" onSubmit={submit}>
         {error && <p>{error}</p>}
         <input
           type="text"
