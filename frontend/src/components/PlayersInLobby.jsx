@@ -1,6 +1,6 @@
 import React from "react";
 
-function PlayerList({ playerList }) {
+function PlayersInLobby({ playerList }) {
   return (
     <div className="w-full md:w-1/4 p-4">
       <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">
@@ -15,4 +15,4 @@ function PlayerList({ playerList }) {
   );
 }
 
-export default PlayerList;
+export default PlayersInLobby;

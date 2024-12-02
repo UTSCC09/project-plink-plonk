@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
 import Chat from "../components/Chat";
-import PlayerList from "../components/PlayerList";
+import PlayersInLobby from "../components/PlayersInLobby";
 import BackLobby from "../components/BackLobby";
 
 import { deleteLobby, closeLobbyVisibility } from "../js/lobby.mjs";
@@ -298,6 +298,7 @@ export default function Host({ lobbyId, username }) {
         const gifElement = document.getElementById("game-gif");
         gifElement.style.display = "block"; // Make the GIF visible
         gifElement.src = "/trophy.gif";
+        gifElement.style.display = "block";
         setTimeout(() => {
           gifElement.style.display = "none";
           gifElement.src = "";
@@ -415,7 +416,7 @@ export default function Host({ lobbyId, username }) {
       />
 
       <div className="flex flex-col md:flex-row h-screen">
-        <PlayerList playerList={playerList} />
+        <PlayersInLobby playerList={playerList} />
 
         <div className="w-full md:w-1/2 p-4 flex flex-col items-center min-w-[500px]">
           <div ref={gameText}>

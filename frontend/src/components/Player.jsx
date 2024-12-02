@@ -6,7 +6,7 @@ import { getCookie } from "../js/authentication.mjs";
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
 import Chat from "../components/Chat";
-import PlayerList from "../components/PlayerList";
+import PlayersInLobby from "../components/PlayersInLobby";
 import BackLobby from "../components/BackLobby";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
@@ -235,7 +235,7 @@ export default function Player({ lobbyId, username }) {
       </div>
 
       <div className="flex flex-col md:flex-row h-screen">
-        <PlayerList playerList={playerList} />
+        <PlayersInLobby playerList={playerList} />
 
         <div className="w-full md:w-1/2 p-4 flex flex-col items-center min-w-[500px]">
           <div ref={gameText}>
