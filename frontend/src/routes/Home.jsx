@@ -118,6 +118,7 @@ function Public() {
     <div className="link-container">
       <Link to={"/login"}>Log In</Link>
       <Link to={"/signup"}>Sign Up</Link>
+      <Link to={"/credits"}>Credits Page</Link>
     </div>
   );
 }
