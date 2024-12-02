@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onError, signup } from "../js/authentication.mjs";
 import "../main.css";
+import BackLink from "../components/BackLink";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -48,6 +49,7 @@ const SignUp = () => {
           <p>Oops! Username already taken</p>
         </div>
       )}
+      <BackLink/>
       <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Signup</h2>
       <form className="space-y-6 justify-items-center mt-10" onSubmit={submit}>
         {error && <p>{error}</p>}

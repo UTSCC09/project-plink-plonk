@@ -12,7 +12,7 @@ import Chat from "../components/Chat";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
 export default function Player({ lobbyId, username }) {
-  const RACE_LENGTH = 10; // PLACEHOLDER
+  const RACE_LENGTH = 9; // PLACEHOLDER
   // Guest player
   const playerRef = useRef(null);
   const playerId = useRef(null);
@@ -245,16 +245,16 @@ export default function Player({ lobbyId, username }) {
       </div>
 
       <div className="flex flex-col md:flex-row h-screen">
-        <div className="bg-slate-500 w-full md:w-1/4 p-4">
+        <div className="w-full md:w-1/4 p-4">
           <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">Players in Lobby:</h3>
           <ul>
             {playerList.map((player) => (
-              <li key={player.id}>Player `{player.username}`</li>
+              <li key={player.id}>Player {player.username}</li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-slate-600 w-full md:w-1/2 p-4 flex flex-col items-center">
+        <div className="w-full md:w-1/2 p-4 flex flex-col items-center">
           <div ref={gameText}>
             {winnerMessage
               ? winnerMessage
@@ -268,6 +268,8 @@ export default function Player({ lobbyId, username }) {
           ) : (
             <div></div>
           )}
+
+          <button className="invisible m-4 w-64"></button>
           <img id="game-gif" />
 
           {isGameStarted && (
@@ -281,7 +283,7 @@ export default function Player({ lobbyId, username }) {
         </div>
 
         {/* <Chat /> bonus */}
-        <div className="bg-slate-700 w-full h-full md:w-1/4 p-4">
+        <div className="w-full h-full md:w-1/4 p-4">
           <Chat
             messages={messages}
             inputMessage={inputMessage}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../js/authentication.mjs'
+import BackLink from '../components/BackLink';
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -44,7 +45,8 @@ const Login = ({ onLogin }) => {
   return (
     <>
     <h2 className="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
-    <form className="space-y-6 justify-items-center mt-10" onSubmit={submit}>
+    <BackLink/>
+    <form className="space-y-6 mt-10" onSubmit={submit}>
       {error && <p>{error}</p>}
       <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
       <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
