@@ -13,7 +13,7 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const app = express();
 
-// Serve static files from React app (to fix later)
+// Serve static files from React app
 app.use(express.static(path.join(__dirname, '../dist')));
 
 const allowedOrigins = [process.env.FRONTEND, process.env.FRONTEND2, process.env.PROD, process.env.PROD2];
@@ -60,5 +60,5 @@ app.use("/api/", userRoutes); // for regular login and signup
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`); // this should be printed in termina fs
+  console.log(`Server is running on port ${PORT}`);
 });

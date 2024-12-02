@@ -5,7 +5,7 @@ import { parse, serialize } from "cookie";
 
 const router = express.Router();
 
-// later to-do: isAuthenticated check
+// isAuthenticated check
 function isAuthenticated(req, res, next) {
   if (!req.session.username) return res.status(401).end("Access denied :( ");
   return next();

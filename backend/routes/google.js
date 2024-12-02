@@ -6,13 +6,13 @@ import { serialize } from "cookie";
 
 const router = express.Router();
 const frontend = process.env.FRONTEND;
+const backend = process.env.BACKEND;
 
 // Configure Google Strategy
 passport.use(new GoogleStrategy({
   clientID: '484810430458-q970ne7dlkemnnvm0evmhjh1ju0i9mpf.apps.googleusercontent.com',
   clientSecret: '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',
-  // Hardcoded here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  callbackURL: `http://localhost:4000/api/google/oauth2/redirect`,
+  callbackURL: `${backend}/api/google/oauth2/redirect`,
 },
   async (accessToken, refreshToken, profile, done) => {
     console.log('Google OAuth response:', profile);
