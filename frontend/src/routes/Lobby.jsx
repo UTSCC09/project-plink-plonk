@@ -1,12 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { getCookie } from "../js/authentication.mjs";
+import { useParams, useLoaderData, useNavigate } from "react-router-dom";
+import { getCookie, checkAuth } from "../js/authentication.mjs";
 
 import { redirect } from "react-router-dom";
 
 import {
   checkIsHost,
   checkAuth,
+  checkIsHost
 } from "../js/lobby.mjs";
 
 import Host from "../components/Host";

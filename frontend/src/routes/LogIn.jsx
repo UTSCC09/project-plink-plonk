@@ -1,62 +1,63 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../js/authentication.mjs'
-import BackLink from '../components/BackLink';
+import { useState } from 'react';
+import { Form, useNavigate, Link, redirect } from 'react-router-dom';
+import { login, checkAuth } from '../js/authentication.mjs'
+import BackLink from "../components/BackLink";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+export async function loader() {
+  const isLoggedIn = await checkAuth();
+  if (isLoggedIn) {
+    return redirect("/home");
+  }
+  return null;
+}
+
+export default function LogIn() {
+  const [message, setMessage] = useState("");
   const navigate = useNavigate(); 
 
-  const submit =  async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log({ username, password }); // DELETE Later, obvi
+
+    const username = e.target.username.value;
+    const password = e.target.password.value;
     const userData = { username, password };
 
-    try {
-      const success = await login(userData);
-
-      if (success) {
-        onLogin = true;
-        navigate("/"); 
-      } else {
-        setError('Login failed');
-      }
-    } catch (err) {
-      console.error('Login failed:', err);
-      setError('Login failed');
-    } finally {
-      setUsername('');
-      setPassword('');
+    const success = await login(userData);
+    if (success) {
+      return navigate("/"); 
+    } else {
+      e.target.reset();
+      setMessage('Login failed');
     }
-  }; 
-
-  // const handleSignupClick = () => {
-  //   navigate("/signup"); // Navigate to signup page
-  // };
-
-  const handleGoogleLogin = async () => {
-    window.location.href = `${apiUrl}/api/google/login`;
-  };
+  }
   
   return (
     <>
-    <h2 className="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
-    <BackLink/>
-    <form className="space-y-6 mt-10" onSubmit={submit}>
-      {error && <p>{error}</p>}
-      <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit" >Login</button>
-      {/* <button onClick={handleSignupClick}>Signup</button> */}
-    </form>
-    <div class="mt-1"></div>
-    <button onClick={handleGoogleLogin} className="button">Sign in with Google</button>
+      <BackLink />
+      <Form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center mb-20">
+        <h2>Log In</h2>
+        {message && <div className="message">{message}</div>}
+        <input
+          type="text"
+          placeholder="Username"
+          name="username"
+          maxLength="20"
+          autoComplete="off"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          maxLength="100"
+          autoComplete="off"
+          required
+        />
+        <button type="submit" className="submitButton">Log In</button>
+      </Form>
+      <Link to={`${apiUrl}/api/google/login`}>Log In with Google</Link>
     </>
   );
-};
-
-export default Login;
+}

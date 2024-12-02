@@ -1,76 +1,65 @@
 import React, { useState } from "react";
-//  ?? For Form component
-// import { Form } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { onError, signup } from "../js/authentication.mjs";
 import "../main.css";
 import BackLink from "../components/BackLink";
+import { useState } from "react";
+import { Form, useNavigate, redirect } from "react-router-dom";
+import { signup, checkAuth } from "../js/authentication.mjs";
 
-const SignUp = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showFailure, setShowFailure] = useState(false);
+export async function loader() {
+  const isLoggedIn = await checkAuth();
+  if (isLoggedIn) {
+    return redirect("/home");
+  }
+  return null;
+}
+
+export default function SignUp() {
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const submit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log({ username, password });
+
+    const username = e.target.username.value;
+    const password = e.target.password.value;
     const userData = { username, password };
-    const signup_status = await signup(userData);
-    if (signup_status) {
-      setShowSuccess(true);
-      setTimeout(() => {
-        navigate("/");
-      }, 1700);
+
+    const success = await signup(userData);
+    if (success) {
+      return navigate("/");
+    } else {
+      e.target.reset();
+      setMessage("Username already taken");
     }
-    if (!signup_status) {
-      setShowFailure(true);
-      setTimeout(() => {
-        setShowFailure(false);
-      }, 1100);
-    }
-    setUsername("");
-    setPassword("");
-    setEmail("");
-  };
+  }
 
   return (
-    <div>
-      {showSuccess && (
-        <div className="popup">
-          <p>Successfully signed up, login now!</p>
-        </div>
-      )}
-      {showFailure && (
-        <div className="popup">
-          <p>Oops! Username already taken</p>
-        </div>
-      )}
-      <BackLink/>
-      <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Signup</h2>
-      <form className="space-y-6 justify-items-center mt-10" onSubmit={submit}>
-        {error && <p>{error}</p>}
+    <>
+      <BackLink />
+      <Form onSubmit={handleSubmit} className="flex flex-col items-center gap-4">
+        <h2>Sign Up</h2>
+        {message && <div className="message">{message}</div>}
         <input
           type="text"
           placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          name="username"
+          maxLength="20"
+          pattern="[\w\-]{2,20}"
+          title="2-20 alphanumeric or underscore and hyphen characters"
+          autoComplete="off"
           required
         />
         <input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          maxLength="100"
+          autoComplete="off"
           required
         />
-        <button type="submit">Sign Up!</button>
-      </form>
-    </div>
+        <button type="submit" className="submitButton">Sign Up</button>
+      </Form>
+    </>
   );
-};
-
-export default SignUp;
+}

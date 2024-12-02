@@ -2,19 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+SIGN SPRINTER PALETTE:
+BACKGROUND: e3cdc8
+HAND: e28b80
+HAND SHADOW: cd7877
+*/
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  /* color-scheme: light dark; */
-  color: rgba(0, 0, 0, 0.87);
-  background-color: #e3cdc8;
-
-  font-synthesis: none;
+  line-height: 1;
+  font-size: 16px;
+  color: #cd7877;
+  font-synthesis: weight;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -82,18 +83,48 @@ a:hover {
 .link-container{
   display: flex;
   justify-content: center;  
-}
-
-.link-container a{
-  padding: 15px; 
-}
-
-#buttons {
+  margin: auto;
   display: flex;
-  gap: 20px; 
-  justify-content: center;  
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+  background-color: #e3cdc8;
+  min-height: 100vh;
 }
 
+h1 {
+  text-transform: uppercase;
+  font-size: 4em;
+  font-weight: 900;
+}
+
+h2 {
+  font-size: 3em;
+  font-weight: 900;
+  margin: 4px 0;
+}
+
+h3 {
+  font-size: 2em;
+  font-weight: 400;
+}
+
+.message {
+  font-size: 1.5em;
+  font-weight: 400;
+}
+
+
+a, .submitButton {
+  font-weight: 600;
+  font-size: 1.5em;
+  padding: 0.2em;
+  padding-top: 0;
+  transition: color 0.3s ease-out;
+}
+
+/*
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -118,6 +149,45 @@ button:focus-visible {
   display: flex;
   gap: 10px;  
 }
+*/
+
+a:hover, .submitButton:hover {
+  cursor: hover;
+  color: #e28b80;
+}
+
+th {
+  font-size: 1.5em;
+}
+
+td a {
+  font-size: 1.5em;
+  font-weight: 400;
+}
+
+td {
+  text-align: center;
+}
+
+input {
+  border-radius: 0.375rem;
+  padding: 0.35em 0.5em;
+  outline: solid 5px #e28b80;
+}
+
+input[type=radio] {
+  outline: none;
+  width: 20px;
+  height: 20px;
+  accent-color: #cd7877;
+}
+
+label {
+  padding: 0 0.4em;
+  line-height: 1;
+}
+
+/* The above is kosher. */
 
 .popup {
   position: fixed;
@@ -161,41 +231,16 @@ button:focus-visible {
   text-align: center;
 }
 
-button {
-  background-color: #46262d;  
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-  background-color: #0a0104;
-}
-
-button:active {
-  background-color: #caccff;  
-  transform: scale(0.95);  
-}
-
-button:focus {
-  outline: none;
-  box-shadow: 0 0 5px #cdcee8;
-}
-
 .popup2 button {
   margin: 10px;
   color:#ffffff
 }
 
-#stay{
+#stay {
   color:#a1ffcd
 }
 
-#leave{
+#leave {
   color:#fff1f1
 }
 
@@ -212,14 +257,6 @@ button:focus {
   padding: 10px;
   text-align: center;
   z-index: 15;
-}
-
-#game-gif {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 #trophy-gif {

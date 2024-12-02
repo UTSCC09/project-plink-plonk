@@ -8,31 +8,41 @@ import {
 import './main.css'
 
 import ErrorPage from "./routes/ErrorPage";
-import Home from "./routes/Home";
-import LogIn from "./routes/LogIn";
-import SignUp from "./routes/SignUp";
-import Credits from "./routes/Credits";
-import SignSprinter ,  { action as playAction }  from "./routes/SignSprinter";
-import Lobby, { loader as lobbyLoader } from "./routes/Lobby";
+import Index, { loader as indexLoader } from "./routes/Index";
+import Home, { loader as homeLoader } from "./routes/Home";
+import LogIn, { loader as loginLoader } from "./routes/LogIn";
+import SignUp, { loader as signupLoader } from "./routes/SignUp";
+import Profile, { loader as profileLoader } from "./routes/Profile";
+import SignSprinter, { loader as playLoader } from "./routes/SignSprinter";
 import JoinLobby, { loader as joinLoader } from "./routes/JoinLobby";
 import LobbyList, { loader as lobbyListLoader } from "./routes/LobbyList";
-import CreateLobby from "./routes/CreateLobby";
+import CreateLobby, {action as createAction} from "./routes/CreateLobby";
+import Lobby, { loader as lobbyLoader } from "./routes/Lobby";
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Index />,
+    errorElement: <ErrorPage />,
+    loader: indexLoader
+  },
+  {
+    path: "/home",
     element: <Home />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
+    loader: homeLoader
   },
   {
     path: "login",
     element: <LogIn />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
+    loader: loginLoader
   },
   {
     path: "signup",
     element: <SignUp />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
+    loader: signupLoader
   },
   {
     path: "credits",
@@ -43,7 +53,7 @@ const router = createBrowserRouter([
     path: "/play",
     element: <SignSprinter />,
     errorElement: <ErrorPage />,
-    action: playAction,
+    loader: playLoader,
     children: [
       {
         path: "join",
@@ -52,7 +62,8 @@ const router = createBrowserRouter([
       },
       {
         path: "create",
-        element: <CreateLobby />
+        element: <CreateLobby />,
+        action: createAction
       },
       {
         path: "browse",
@@ -60,6 +71,12 @@ const router = createBrowserRouter([
         loader: lobbyListLoader
       }
     ]
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+    errorElement: <ErrorPage />,
+    loader: profileLoader
   },
   {
     path: "/play/:lobbyId",

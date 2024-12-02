@@ -117,7 +117,7 @@ router.patch("/change-nickname", isAuthenticated, async (req, res) => {
       })
     );
 
-    if (result.modifiedCount === 1) {
+    if (result.matchedCount === 1) {
       res.status(200).json({ message: "Nickname updated successfully!" });
     } else {
       res.status(400).json({ message: "Failed to update nickname!" });

@@ -1,56 +1,31 @@
-import { Outlet, Link, redirect } from "react-router-dom";
-import { useState, useEffect } from "react";
-import Peer from "peerjs";
+import { Outlet, Link, useLoaderData, redirect } from "react-router-dom";
 import BackLink from "../components/BackLink";
-import { createLobby } from "../js/lobby.mjs";
-import { checkAuth } from "../js/lobby.mjs";
+import { getCookie, checkAuth } from "../js/authentication.mjs";
 
-export async function action({ request }) {
-  // Parse form data
-  const formData = await request.formData();
-  const name = formData.get("name");
-  const visibility = formData.get("visibility");
-
-  try {
-    const lobbyId = await createLobby(name, visibility);
-
-    // Redirect to the newly created lobby
-    return redirect(`/play/${lobbyId}`); 
-  } catch (error) {
-    console.error("Error creating lobby:", error);
-    return redirect(`/`);
+export async function loader() {
+  const isLoggedIn = await checkAuth();
+  if (!isLoggedIn) {
+    return redirect("/");
   }
+  const nickname = decodeURIComponent(getCookie("nickname"));
+  return nickname;
 }
 
 export default function SignSprinter() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const logInValue = await checkAuth();  
-      console.log("here");
-      console.log(logInValue)
-      setIsLoggedIn(logInValue);   
-    };
-    checkAuthStatus();   
-  }, []);
+  const nickname = useLoaderData();
 
   return (
-    <div>
-      <div>
-        <h1 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Sign Sprinter</h1>
-        <BackLink />
-      </div>
-      {isLoggedIn && (
-        <div id="buttons">
+    <div className="flex flex-col items-center justify-stretch gap-2">
+      <BackLink />
+      <h1>Sign Sprinter</h1>
+      <div className="flex gap-6 items-center">
           <Link to={"./join"}>Join Lobby</Link>
           <Link to={"./create"}>Create Lobby</Link>
           <Link to={"./browse"}>View Lobbies</Link>
-        </div>
-      )}
-      {!isLoggedIn && (
-        <div>You're not logged in, oops!</div>
-      )}
-      <Outlet />
+      </div>
+      <div className="mt-8 flex flex-col gap-4 items-center self-stretch">
+        <Outlet context={nickname} />
+      </div>
     </div>
   );
 }

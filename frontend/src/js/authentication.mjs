@@ -1,12 +1,16 @@
-// everything for signup + login
-// that's backend for the frontend
+export {
+  getCookie,
+  signup,
+  login,
+  changeNickname,
+  checkAuth,
+  logOut
+};
+
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-export function onError(err) {
+function onError(err) {
   console.error("[error]", err);
-  const error_box = document.querySelector("#error_box");
-  error_box.innerHTML = err.message;
-  error_box.style.visibility = "visible";
 }
 
 function handleResponse(res) {
@@ -19,14 +23,14 @@ function handleResponse(res) {
   return res.json();
 }
 
-export const getCookie = (name) => {
+function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
   return null;
-};
+}
 
-export async function signup(userData) {
+async function signup(userData) {
   const response = await fetch(`${apiUrl}/api/signup`, {
     method: "POST",
     headers: {
@@ -42,7 +46,7 @@ export async function signup(userData) {
   }
 }
 
-export async function login(userData) {
+async function login(userData) {
   const response = await fetch(`${apiUrl}/api/login`, {
     method: "POST",
     headers: {
@@ -51,36 +55,45 @@ export async function login(userData) {
     body: JSON.stringify(userData),
     credentials: "include",
   })
-  if (response.ok) return true;
-  else return false;
-}
-
-export async function changeNickname(newNickname) {
-  console.log("Inputs:", { newNickname });
-  try {
-    const response = await fetch(`${apiUrl}/api/change-nickname`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ nickname: newNickname }),
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to change nickname");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (err) {
-    console.error("Error changing nickname:", err);
-    throw err;
+  if (response.ok) {
+    return true;
+  } else {
+    return false;
   }
 }
 
-export function logOut(success) {
+async function changeNickname(newNickname) {
+  const response = await fetch(`${apiUrl}/api/change-nickname`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ nickname: newNickname }),
+    credentials: "include",
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    return data;
+  } else {
+    return false;
+  }
+}
+
+async function checkAuth() {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const response = await fetch(`${apiUrl}/api/check-auth`, {
+    method: "GET",
+    credentials: "include",
+  });
+  if (response.ok) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function logOut(success) {
   document.cookie = `lobbyId=; max-age=0; path=/;`;
   document.cookie = `isHost=; max-age=0; path=/;`;
   fetch(`${apiUrl}/api/signout/`, {
@@ -88,8 +101,7 @@ export function logOut(success) {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   })
-    .then(handleResponse)
-    .then(success)
-    .catch(onError);
+  .then(handleResponse)
+  .then(success)
+  .catch(onError);
 }
-

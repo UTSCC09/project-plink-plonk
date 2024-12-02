@@ -1,58 +1,51 @@
 import { getPublicLobbies } from "../js/lobby.mjs";
-import { useLoaderData, Link } from "react-router-dom";
-import { checkAuth } from "../js/lobby.mjs";
+import { useLoaderData, useRevalidator, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-
 
 export async function loader() {
   const lobbies = await getPublicLobbies();
-  return { lobbies };
+  return lobbies;
 }
 
 export default function LobbyList() {
-  const { lobbies: initialLobbies } = useLoaderData();
-  const [lobbies, setLobbies] = useState(initialLobbies);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const logInValue = await checkAuth();  
-      console.log("here");
-      console.log(logInValue)
-      setIsLoggedIn(logInValue);   
-    };
-    checkAuthStatus();   
-  }, []);
+  const lobbies = useLoaderData();
+  const revalidator = useRevalidator();
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
-      const lobbies = await getPublicLobbies();
-      setLobbies(lobbies);  
-    }, 2500);  
-    return () => clearInterval(intervalId);
+    const interval = setInterval(() => {
+      revalidator.revalidate();
+    }, 30 * 1000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div id="lobbyList">
-      <h2>Public Lobbies</h2>
-  
-      {isLoggedIn ? (
-        lobbies.length ? (
-          <ul>
+    <>
+      <h3>Public Lobbies</h3>
+      {
+      lobbies.length
+      ?
+      (
+        <table className="table-auto self-stretch">
+          <thead>
+            <tr>
+              <th>Lobby Name</th>
+              <th>Code</th>
+            </tr>
+          </thead>
+          <tbody>
             {lobbies.map((lobby) => (
-              <li key={lobby.code}>
-                <div>
-                  <Link to={`../${lobby.code}`}>{lobby.name}</Link>
-                </div>
-              </li>
+              <tr key={lobby.code}>
+                  <td><Link to={`../${lobby.code}`}>{lobby.name}</Link></td>
+                  <td><Link to={`../${lobby.code}`}>{lobby.code}</Link></td>
+              </tr>
             ))}
-          </ul>
-        ) : (
-          <p>{"Omg there are no lobbies atm! How about you make one :)"}</p>
-        )
-      ) : (
-        <p>{"You must be logged in to view the lobbies."}</p>
-      )}
-    </div>
+          </tbody>
+        </table>
+      )
+      :
+      <p>There are no public lobbies right now! Why don't you create one...</p>
+      }
+    </>
   );
 }
