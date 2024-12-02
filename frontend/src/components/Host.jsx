@@ -376,12 +376,12 @@ export default function Host({ lobbyId, username }) {
 
   function replay() {
     setProgressList((prevProgressList) => {
-        const updatedProgressList = prevProgressList.map((entry) => ({
-          ...entry,
-          progress: 0,
-        }));
+      const updatedProgressList = prevProgressList.map((entry) => ({
+        ...entry,
+        progress: 0,
+      }));
 
-    for (const key in connections.current) {
+      for (const key in connections.current) {
         const playerConnection = connections.current[key];
         if (playerConnection) {
           playerConnection.send({
@@ -390,19 +390,19 @@ export default function Host({ lobbyId, username }) {
           });
         }
       }
-      return updatedProgressList; 
+      return updatedProgressList;
     });
 
     setIsGameStarted(false);
     setMessages([]);
     setCurrentSign(null);
-    gameText.current = null;
+    gameText.current.innerText = `${generateProblemText(question) + `\nYou are currently signing ${currentSign}`}`;
     setGameProgress(-1);
     setQuestion(null);
     setShowReplay(false);
     const button = document.getElementById("startButton");
     if (button) {
-      button.style.visibility = "visible";  // Show the button
+      button.style.visibility = "visible"; // Show the button
     }
   }
 
@@ -452,7 +452,9 @@ export default function Host({ lobbyId, username }) {
             <img id="trophy-gif" />
           </div>
 
-          <button id="startButton" onClick={startGame}>Start</button>
+          <button id="startButton" onClick={startGame}>
+            Start
+          </button>
           <img id="game-gif" />
         </div>
 

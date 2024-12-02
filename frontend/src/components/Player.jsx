@@ -92,7 +92,7 @@ export default function Player({ lobbyId, username }) {
           setIsGameStarted(false);
           setMessages([]);
           setCurrentSign(null);
-          gameText.current = null;
+          gameText.current.innerText = `${generateProblemText(question) + `\nYou are currently signing ${currentSign}`}`;
           setGameProgress(-1);
           setQuestion(null);
           setShowReplay(false);
