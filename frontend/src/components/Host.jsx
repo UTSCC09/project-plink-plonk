@@ -275,7 +275,7 @@ export default function Host({ lobbyId, username }) {
       setProgressList((prevProgressList) => {
         let user = prevProgressList.find((user) => user.username === username);
         if (user) {
-          user.progress = newGameProgress;  
+          user.progress = newGameProgress;
         }
         const updatedList = [...prevProgressList];
   
@@ -292,39 +292,39 @@ export default function Host({ lobbyId, username }) {
         });
         return updatedList;
       });
-        return newGameProgress;
-    });
   
-      if (gameProgress === gameEnd) {
-      setWinnerMessage(`You won the game!`);
-      const gifElement = document.getElementById("game-gif");
-      gifElement.style.display = "block"; // Make the GIF visible
-      gifElement.src = "/trophy.gif";
-      setTimeout(() => {
-        gifElement.style.display = "none";
-        gifElement.src = "";
-      }, 1000);
-
-      for (const key in connections.current) {
-        const playerConnection = connections.current[key];
-        if (playerConnection) {
-          playerConnection.send({
-            type: "player-won",
-            username: username,
-          });
+      if (newGameProgress === gameEnd) {
+        setWinnerMessage(`You won the game!`);
+        const gifElement = document.getElementById("game-gif");
+        gifElement.style.display = "block"; // Make the GIF visible
+        gifElement.src = "/trophy.gif";
+        setTimeout(() => {
+          gifElement.style.display = "none";
+          gifElement.src = "";
+        }, 1000);
+  
+        for (const key in connections.current) {
+          const playerConnection = connections.current[key];
+          if (playerConnection) {
+            playerConnection.send({
+              type: "player-won",
+              username: username,
+            });
+          }
         }
+        setShowReplay(true);
+      } else {
+        let newQuestion = generateProblem();
+        while (newQuestion === question) {
+          newQuestion = generateProblem();
+        }
+        setQuestion(newQuestion);
       }
-      setShowReplay(true);
-    } else {
-      // Create next question
-      let newQuestion = generateProblem();
-      // Avoid repeat of current question
-      while (newQuestion === question) {
-        newQuestion = generateProblem();
-      }
-      setQuestion(newQuestion);
-    }
+  
+      return newGameProgress;  
+    });
   }
+  
 
   function sendMessage() {
     if (!inputMessage.trim()) return;
@@ -401,7 +401,6 @@ export default function Host({ lobbyId, username }) {
     }
     setWebcamKey((prevKey) => prevKey + 1);
     setWinnerMessage(null);
-    setGameEnd(9);
   }
 
   return (

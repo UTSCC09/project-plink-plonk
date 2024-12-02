@@ -103,7 +103,6 @@ export default function Player({ lobbyId, username }) {
           setWebcamKey((prevKey) => prevKey + 1);
           setWinnerMessage(null);
           setStarted(false);
-          setGameEnd(10);
         } 
       });
     });
