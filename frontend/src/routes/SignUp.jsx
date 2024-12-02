@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "../main.css";
 import BackLink from "../components/BackLink";
-import { useState } from "react";
 import { Form, useNavigate, redirect } from "react-router-dom";
 import { signup, checkAuth } from "../js/authentication.mjs";
 

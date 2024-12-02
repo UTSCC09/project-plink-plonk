@@ -1,16 +1,9 @@
-import { useState, useRef, useEffect } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { getCookie } from "../js/authentication.mjs";
 import { useParams, useLoaderData, useNavigate } from "react-router-dom";
 import { getCookie, checkAuth } from "../js/authentication.mjs";
 
 import { redirect } from "react-router-dom";
 
-import {
-  checkIsHost,
-  checkAuth,
-  checkIsHost
-} from "../js/lobby.mjs";
+import { checkIsHost } from "../js/lobby.mjs";
 
 import Host from "../components/Host";
 import Player from "../components/Player";
@@ -56,15 +49,14 @@ export default function Lobby({ hasWebcam = true }) {
 
   return (
     <div className="lobby-div">
-
-      <h2 className="font-display text-4xl font-extrabold md:text-4xl xl:text-5xl mb-10">Sign Sprinter</h2>
+      <h2 className="font-display text-4xl font-extrabold md:text-4xl xl:text-5xl mb-10">
+        Sign Sprinter
+      </h2>
 
       {/* Share */}
-      <div className="flex absolute top-0 left-0 m-2 text-lg">
-        <h2>
-          Share LobbyID with friends:
-        </h2>
-        <div className="">
+      <div className="flex absolute top-0 left-0 m-2 text-lg items-center gap-2">
+        <p>Share LobbyID with friends:</p>
+        <div className="flex items-center gap-1">
           <span>{lobbyId}</span>
           <img
             src="/copy.png"
@@ -86,8 +78,6 @@ export default function Lobby({ hasWebcam = true }) {
           <Player lobbyId={lobbyId} username={username} />
         )}
       </div>
-
-
     </div>
   );
 }

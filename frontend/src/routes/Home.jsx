@@ -19,11 +19,13 @@ export default function Home() {
       <h2>welcome, {nickname}</h2>
       <div>
         <img src="/motion.gif" alt="Motion GIF" className="h-80 w-auto" />
-      </div> 
-      <div className="flex flex-col gap-6 items-center">
+      </div>
+      <div className="flex flex-row gap-6 items-center">
         <Link to={"/play"}>Play</Link>
         <Link to={"/profile"}>Change Nickname</Link>
-        <Link to={"/"} onClick={() => logOut()}>Log Out</Link>
+        <Link to={"/"} onClick={() => logOut()}>
+          Log Out
+        </Link>
       </div>
     </>
   );

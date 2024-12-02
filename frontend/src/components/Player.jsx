@@ -12,7 +12,7 @@ import Chat from "../components/Chat";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
 export default function Player({ lobbyId, username }) {
-  const RACE_LENGTH = 9; // PLACEHOLDER
+  const RACE_LENGTH = 10; // PLACEHOLDER
   // Guest player
   const playerRef = useRef(null);
   const playerId = useRef(null);
@@ -36,6 +36,8 @@ export default function Player({ lobbyId, username }) {
   let gameText = useRef(null);
   let [gameEnd, setGameEnd] = useState(RACE_LENGTH);
   let [gameProgress, setGameProgress] = useState(-1);
+  let [started, setStarted] = useState(false);
+
   let [question, setQuestion] = useState(null);
   const [webcamKey, setWebcamKey] = useState(0);
   const [winnerMessage, setWinnerMessage] = useState(null);
@@ -64,6 +66,7 @@ export default function Player({ lobbyId, username }) {
           setPlayerList(data.playerList);
         } else if (data.type == "progress-update") {
           setProgressList(data.progressList);
+          console.log("received progress list is:", data.progressList);
         } else if (data.type == "start-game") {
           const gifElement = document.getElementById("game-gif");
           gifElement.style.display = "block"; // Make the GIF visible
@@ -100,6 +103,7 @@ export default function Player({ lobbyId, username }) {
           setShowReplay(false);
           setWebcamKey((prevKey) => prevKey + 1);
           setWinnerMessage(null);
+          setStarted(false);
         } else {
           console.log("Received message:", data);
         }
@@ -142,39 +146,44 @@ export default function Player({ lobbyId, username }) {
   }, []);
 
   function playGame() {
-    setGameProgress(gameProgress + 1);
-    let conn = connRef.current;
-    conn.send({
-      type: "progress-update",
-      username: decodeURIComponent(getCookie("nickname")),
-      progress: gameProgress,
-    });
-
-    if (gameProgress === gameEnd) {
-      setWinnerMessage(`You won the game!`);
-      const gifElement = document.getElementById("game-gif");
-      gifElement.style.display = "block"; // Make the GIF visible
-      gifElement.src = "/trophy.gif";
-      setTimeout(() => {
-        gifElement.style.display = "none";
-        gifElement.src = "";
-      }, 1000);
-
-      connRef.current.send({
-        type: "player-won",
-        username: username,
-        playerId: playerId,
+    setGameProgress((prevGameProgress) => {
+      const newGameProgress = prevGameProgress + 1;
+      let conn = connRef.current;
+      conn.send({
+        type: "progress-update",
+        username: decodeURIComponent(getCookie("nickname")),
+        progress: newGameProgress,
       });
-    } else {
-      // Create next question
-      let newQuestion = generateProblem();
-      // Avoid repeat of current question
-      while (newQuestion === question) {
-        newQuestion = generateProblem();
+  
+      // Handle game end and send player-won if progress equals gameEnd
+      if (newGameProgress === gameEnd) {
+        setWinnerMessage(`You won the game!`);
+        const gifElement = document.getElementById("game-gif");
+        gifElement.style.display = "block"; // Make the GIF visible
+        gifElement.src = "/trophy.gif";
+        setTimeout(() => {
+          gifElement.style.display = "none";
+          gifElement.src = "";
+        }, 1000);
+  
+        connRef.current.send({
+          type: "player-won",
+          username: username,
+          playerId: playerId,
+        });
+      } else {
+        // Create next question
+        let newQuestion = generateProblem();
+        // Avoid repeat of current question
+        while (newQuestion === question) {
+          newQuestion = generateProblem();
+        }
+        setQuestion(newQuestion);
       }
-      setQuestion(newQuestion);
-    }
+        return newGameProgress;
+    });
   }
+  
 
   function sendMessage() {
     if (!inputMessage.trim()) return;
@@ -218,7 +227,18 @@ export default function Player({ lobbyId, username }) {
           className="absolute top-0 right-0 m-2"
           onClick={handleLeaveClick}
         >
-          [Back Icon]
+          <svg
+            width="30px"
+            height="30px"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z"
+              fill="#CD7877"
+            />
+          </svg>
         </button>
         {showReplay && (
           <button id="replay" onClick={replay}>
@@ -278,7 +298,7 @@ export default function Player({ lobbyId, username }) {
 
           {isGameStarted && (
             <Game
-              gameEnd={gameEnd}
+              gameEnd={10}
               gameProgress={gameProgress}
               progressList={progressList}
               username={username}

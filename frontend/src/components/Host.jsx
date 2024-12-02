@@ -11,7 +11,7 @@ import { deleteLobby, closeLobbyVisibility } from "../js/lobby.mjs";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
 export default function Host({ lobbyId, username }) {
-  const RACE_LENGTH = 9; // PLACEHOLDER
+  const RACE_LENGTH = 10; // PLACEHOLDER
   const hostPeer = useRef(null);
   const connections = useRef({});
 
@@ -32,12 +32,12 @@ export default function Host({ lobbyId, username }) {
   let gameText = useRef(null);
   let [gameEnd, setGameEnd] = useState(RACE_LENGTH);
   let [gameProgress, setGameProgress] = useState(-1);
+  let [started, setStarted] = useState(false);
   let [question, setQuestion] = useState(null);
   const [webcamKey, setWebcamKey] = useState(0);
   const [winnerMessage, setWinnerMessage] = useState(null);
 
   useEffect(() => {
-    const RACE_LENGTH = 10; // PLACEHOLDER
     if (!hostPeer.current) {
       hostPeer.current = new Peer(lobbyId);
     }
@@ -148,7 +148,7 @@ export default function Host({ lobbyId, username }) {
                 setShowReplay(true);
               }, 2500);
             }
-            gameText.current.innerText = `Player ${data.username} won the game!`;
+            setWinnerMessage(`Player ${data.username} won the game!`);
           } else if (data.type == "leaving") {
             setProgressList((prevProgressList) => {
               const updatedProgressList = prevProgressList.filter(
@@ -274,27 +274,33 @@ export default function Host({ lobbyId, username }) {
   }
 
   function playGame() {
-    setGameProgress(gameProgress + 1);
-    // Host updates their progress to others
-    setProgressList((prevProgressList) => {
-      let user = prevProgressList.find((user) => user.username == username);
-      user.progress = gameProgress;
-      const updatedList = [...prevProgressList];
-
-      prevProgressList.forEach((player, index) => {
-        if (index !== 0) {
-          const playerConnection = connections.current[player.id];
-          if (playerConnection) {
-            playerConnection.send({
-              type: "progress-update",
-              progressList: updatedList,
-            });
-          }
+    setGameProgress((prevGameProgress) => {
+      const newGameProgress = prevGameProgress + 1;
+  
+      setProgressList((prevProgressList) => {
+        let user = prevProgressList.find((user) => user.username === username);
+        if (user) {
+          user.progress = newGameProgress;  
         }
+        const updatedList = [...prevProgressList];
+  
+        prevProgressList.forEach((player, index) => {
+          if (index !== 0) {
+            const playerConnection = connections.current[player.id];
+            if (playerConnection) {
+              playerConnection.send({
+                type: "progress-update",
+                progressList: updatedList,
+              });
+            }
+          }
+        });
+        return updatedList;
       });
-      return updatedList;
+        return newGameProgress;
     });
-
+  
+  
     console.log("Game progress is:", gameProgress);
     if (gameProgress === gameEnd) {
       setWinnerMessage(`You won the game!`);
@@ -395,6 +401,7 @@ export default function Host({ lobbyId, username }) {
     setGameProgress(0);
     setQuestion(null);
     setShowReplay(false);
+    setStarted(false);
     const button = document.getElementById("startButton");
     if (button) {
       button.style.visibility = "visible"; // Show the button
@@ -410,7 +417,18 @@ export default function Host({ lobbyId, username }) {
           className="absolute top-0 right-0 m-2"
           onClick={handleLeaveClick}
         >
-          Go Back
+          <svg
+          width="30px"
+          height="30px"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z"
+            fill="#CD7877"
+          />
+        </svg>
         </button>
         {showReplay && (
           <button id="replay" onClick={replay}>
@@ -461,7 +479,7 @@ export default function Host({ lobbyId, username }) {
 
           {isGameStarted && (
             <Game
-              gameEnd={gameEnd}
+              gameEnd={10}
               gameProgress={gameProgress}
               progressList={progressList}
               username={username}

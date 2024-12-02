@@ -22,7 +22,7 @@ export default function CreateLobby() {
   return (
     <>
       {/* <h3>Create</h3> */}
-      <Form method="post" action="." className="flex flex-col items-center gap-4">
+      <Form method="post" action="." className="flex flex-col items-center gap-1">
         <input
           type="text"
           id="code"
