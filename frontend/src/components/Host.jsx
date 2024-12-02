@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../js/authentication.mjs";
-
 import { redirect } from "react-router-dom";
 
 import Game from "../components/Game";
@@ -42,14 +41,11 @@ export default function Host({ lobbyId, username }) {
     const host = hostPeer.current;
 
     host.on("open", (id) => {
-      console.log("Connected with ID:", id);
       setPlayerList([{ id, username }]);
-
       setProgressList([{ id, username, progress: 0 }]);
 
       // Listen for incoming connections
       host.on("connection", (conn) => {
-        console.log("Player joined the game:", conn.peer);
 
         conn.on("data", (data) => {
           console.log("Data received by host:", data);
@@ -81,7 +77,6 @@ export default function Host({ lobbyId, username }) {
                       type: "player-list",
                       playerList: updatedList,
                     });
-                    console.log("sending list to player");
                   }
                 }
               });
@@ -111,7 +106,6 @@ export default function Host({ lobbyId, username }) {
                       type: "progress-update",
                       progressList: updatedList,
                     });
-                    console.log("Sending progress list to player");
                   }
                 }
               });
@@ -134,7 +128,6 @@ export default function Host({ lobbyId, username }) {
                       type: "progress-update",
                       progressList: updatedList,
                     });
-                    console.log("Sending progress list to player!!");
                   }
                 }
               });
@@ -175,9 +168,6 @@ export default function Host({ lobbyId, username }) {
                         playerList: updatedList,
                         progressList: updatedProgressList,
                       });
-                      console.log(
-                        "sending updated lists except to the one that left"
-                      );
                     }
                   }
                 });
@@ -187,8 +177,6 @@ export default function Host({ lobbyId, username }) {
             });
           } else {
             // data.type == "message"
-            console.log("Got somebody's message");
-
             setMessages((prev) => {
               const updatedMessages = [...prev, `${data.message}`];
 
@@ -199,7 +187,6 @@ export default function Host({ lobbyId, username }) {
                     type: "message",
                     messages: updatedMessages,
                   });
-                  console.log("Sending updated messages to connection:", key);
                 }
               }
               return updatedMessages;
@@ -211,7 +198,6 @@ export default function Host({ lobbyId, username }) {
 
     return () => {
       if (hostPeer.current && hostPeer.current.open) {
-        console.log("Destroying peer connection");
         document.cookie = `isHost=; max-age=0; path=/;`;
         hostPeer.current.destroy();
         deleteLobby(lobbyId);
@@ -222,9 +208,6 @@ export default function Host({ lobbyId, username }) {
   // Progresses game if sign on camera matches question
   useEffect(() => {
     if (question && currentSign && currentSign === question.label) {
-      console.log(
-        `Question is ${question.label}, sign is ${currentSign}, so we move`
-      );
       playGame();
     }
   }, [currentSign]);
@@ -272,7 +255,6 @@ export default function Host({ lobbyId, username }) {
           playerConnection.send({
             type: "start-game",
           });
-          console.log("Telling players the game is starting");
         }
       }
     });
@@ -295,8 +277,6 @@ export default function Host({ lobbyId, username }) {
 
   function playGame() {
     setGameProgress(gameProgress + 1);
-    console.log("Moved to: " + gameProgress);
-
     // Host updates their progress to others
     setProgressList((prevProgressList) => {
       let user = prevProgressList.find((user) => user.username == username);
@@ -311,7 +291,6 @@ export default function Host({ lobbyId, username }) {
               type: "progress-update",
               progressList: updatedList,
             });
-            console.log("Sending progress list to player!!");
           }
         }
       });

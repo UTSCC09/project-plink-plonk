@@ -60,14 +60,6 @@ app.use("/api/lobby", lobbyRoutes);
 app.use('/api/google/', googleRoutes); // for OAuth login
 app.use("/api/", userRoutes); // for regular login and signup
 
-
-
-
-// Catch-all route to serve React's index.html for all non-API routes .. apparently. fix later
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
-// });
-
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`); // this should be printed in termina fs

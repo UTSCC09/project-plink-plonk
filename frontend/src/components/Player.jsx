@@ -63,13 +63,10 @@ export default function Player({ lobbyId, username }) {
 
       conn.on("data", (data) => {
         if (data.type == "player-list") {
-          console.log("Got data, type is player-list");
           setPlayerList(data.playerList);
         } else if (data.type == "progress-update") {
           setProgressList(data.progressList);
-          console.log("Got updated progress List");
         } else if (data.type == "start-game") {
-          console.log("Game is starting!");
           const gifElement = document.getElementById("game-gif");
           gifElement.style.display = "block"; // Make the GIF visible
           gifElement.src = "/countdown.gif";
@@ -80,7 +77,6 @@ export default function Player({ lobbyId, username }) {
             playGame();
           }, 3000);
         } else if (data.type == "message") {
-          console.log("received message list update");
           setMessages(data.messages);
         } else if (data.type == "player-won") {
           gameText.current.innerText = `Player ${data.username} won the game!`;
@@ -101,7 +97,6 @@ export default function Player({ lobbyId, username }) {
 
     return () => {
       if (playerRef.current && playerRef.current.open) {
-        console.log("Destroying guest peer connection");
         playerRef.current.destroy();
       }
     };
@@ -110,9 +105,6 @@ export default function Player({ lobbyId, username }) {
   // Progresses game if sign on camera matches question
   useEffect(() => {
     if (question && currentSign && currentSign === question.label) {
-      console.log(
-        `Question is ${question.label}, sign is ${currentSign}, so we move`
-      );
       playGame();
     }
   }, [currentSign]);
@@ -140,8 +132,6 @@ export default function Player({ lobbyId, username }) {
 
   function playGame() {
     setGameProgress(gameProgress + 1);
-    console.log("Moved to: " + gameProgress);
-
     let conn = connRef.current;
     conn.send({
       type: "progress-update",
@@ -180,7 +170,6 @@ export default function Player({ lobbyId, username }) {
     const message = `${username}: ${inputMessage}`;
 
     connRef.current.send({ type: "message", message: message });
-    console.log("sent message..");
     setInputMessage("");
   }
 
@@ -236,7 +225,7 @@ export default function Player({ lobbyId, username }) {
           <ul>
             {playerList.map((player) => (
               <li key={player.id}>
-                Player `{player.username}` with ID: {player.id}
+                Player `{player.username}`
               </li>
             ))}
           </ul>
