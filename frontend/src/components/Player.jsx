@@ -254,7 +254,7 @@ export default function Player({ lobbyId, username }) {
           </ul>
         </div>
 
-        <div className="bg-slate-600 w-full md:w-1/2 p-4 flex flex-col">
+        <div className="bg-slate-600 w-full md:w-1/2 p-4 flex flex-col items-center">
           <div ref={gameText}>
             {winnerMessage
               ? winnerMessage
