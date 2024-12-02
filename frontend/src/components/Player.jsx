@@ -7,6 +7,7 @@ import { redirect } from "react-router-dom";
 
 import Game from "../components/Game";
 import Webcam from "../components/Webcam";
+import Chat from "../components/Chat";
 
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
@@ -232,6 +233,7 @@ export default function Player({ lobbyId, username }) {
           </div>
         )}
       </div>
+
       <div>
         {hostLeaving && (
           <div className="popup2">Sorry, the host is destroying this game.</div>
@@ -274,28 +276,15 @@ export default function Player({ lobbyId, username }) {
           </div>
         )}
         <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
+
+
         {/* <Chat /> bonus */}
-        <div>
-          <h2>Lobby Chat</h2>
-          <div id="lobby-chat">
-            {messages.map((msg, index) => (
-              <p key={index}>{msg}</p>
-            ))}
-          </div>
-          <input
-            id="chat-input"
-            type="text"
-            placeholder="Type a message..."
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                sendMessage();
-              }
-            }}
-          />
-          <button onClick={sendMessage}>Send</button>
-        </div>
+        <Chat
+          messages={messages}
+          inputMessage={inputMessage}
+          setInputMessage={setInputMessage}
+          sendMessage={sendMessage}
+        />
       </div>
     </div>
   );

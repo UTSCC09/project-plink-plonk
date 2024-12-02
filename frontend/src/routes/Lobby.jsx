@@ -53,24 +53,26 @@ export default function Lobby({ hasWebcam = true }) {
 
   return (
     <div>
-      <div>
-        <h2>Sign Sprinter</h2>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <h2 style={{ marginRight: "10px" }}>
-            Share LobbyID with friends: {lobbyId}
-          </h2>
-          <img
-            src="/copy.png"
-            alt="Copy"
-            onClick={() => copyToClipboard(lobbyId)}
-            style={{
-              width: "24px",
-              height: "24px",
-              cursor: "pointer",
-            }}
-          />
-        </div>
+
+      <h2>Sign Sprinter</h2>
+
+      {/* Share */}
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <h2 style={{ marginRight: "10px" }}>
+          Share LobbyID with friends: {lobbyId}
+        </h2>
+        <img
+          src="/copy.png"
+          alt="Copy"
+          onClick={() => copyToClipboard(lobbyId)}
+          style={{
+            width: "24px",
+            height: "24px",
+            cursor: "pointer",
+          }}
+        />
       </div>
+
       <div>
         {isHost ? (
           <Host lobbyId={lobbyId} username={username} />
@@ -78,6 +80,8 @@ export default function Lobby({ hasWebcam = true }) {
           <Player lobbyId={lobbyId} username={username} />
         )}
       </div>
+
+
     </div>
   );
 }
