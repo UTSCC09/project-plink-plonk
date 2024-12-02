@@ -31,8 +31,3 @@ export default function Game({
   );
 }
 
-{
-  /* <li key={player.id}>
-          Player `{player.username}` with ID: {player.id}
-        </li> */
-}
