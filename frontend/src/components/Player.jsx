@@ -36,6 +36,7 @@ export default function Player({ lobbyId, username }) {
   let [gameEnd, setGameEnd] = useState(RACE_LENGTH);
   let [gameProgress, setGameProgress] = useState(-1);
   let [question, setQuestion] = useState(null);
+  const [webcamKey, setWebcamKey] = useState(0);
 
   useEffect(() => {
     if (!playerRef.current) {
@@ -93,9 +94,10 @@ export default function Player({ lobbyId, username }) {
           setMessages([]);
           setCurrentSign(null);
           gameText.current.innerText = `${generateProblemText(question) + `\nYou are currently signing ${currentSign}`}`;
-          setGameProgress(-1);
+          setGameProgress(0);
           setQuestion(null);
           setShowReplay(false);
+          setWebcamKey(prevKey => prevKey + 1);
         } else {
           console.log("Received message:", data);
         }
@@ -273,7 +275,7 @@ export default function Player({ lobbyId, username }) {
             />
           </div>
         )}
-        <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
+        <Webcam key={webcamKey} currentSign={currentSign} changeSign={setCurrentSign} />
         {/* <Chat /> bonus */}
         <div>
           <h2>Lobby Chat</h2>
