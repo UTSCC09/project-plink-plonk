@@ -36,7 +36,6 @@ export default function Host({ lobbyId, username }) {
   const [webcamKey, setWebcamKey] = useState(0);
   const [winnerMessage, setWinnerMessage] = useState(null);
 
-
   useEffect(() => {
     const RACE_LENGTH = 10; // PLACEHOLDER
     if (!hostPeer.current) {
@@ -407,13 +406,16 @@ export default function Host({ lobbyId, username }) {
   return (
     <div>
       <div>
-        <button className="absolute top-0 right-0 m-2" onClick={handleLeaveClick} >Go Back</button>
+        <button
+          className="absolute top-0 right-0 m-2"
+          onClick={handleLeaveClick}
+        >
+          Go Back
+        </button>
         {showReplay && (
-          <div className="popup2">
-            <button id="replay" onClick={replay}>
-              Replay game
-            </button>
-          </div>
+          <button id="replay" onClick={replay}>
+            Replay game
+          </button>
         )}
         {showPopup && (
           <div className="popup-overlay">
@@ -432,12 +434,12 @@ export default function Host({ lobbyId, username }) {
 
       <div className="flex flex-col md:flex-row h-screen">
         <div className="w-full md:w-1/4 p-4">
-          <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">Players in Lobby:</h3>
+          <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">
+            Players in Lobby:
+          </h3>
           <ul>
             {playerList.map((player) => (
-              <li key={player.id}>
-                Player {player.username}
-              </li>
+              <li key={player.id}>Player {player.username}</li>
             ))}
           </ul>
         </div>
@@ -466,7 +468,7 @@ export default function Host({ lobbyId, username }) {
             />
           )}
         </div>
-        
+
         {/* <Chat /> bonus */}
         <div className="w-full h-full md:w-1/4 p-4">
           <Chat
@@ -480,7 +482,6 @@ export default function Host({ lobbyId, username }) {
         <div className="fixed bottom-0 left-0 m-4">
           <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
         </div>
-
       </div>
     </div>
   );

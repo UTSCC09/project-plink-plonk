@@ -40,7 +40,6 @@ export default function Player({ lobbyId, username }) {
   const [webcamKey, setWebcamKey] = useState(0);
   const [winnerMessage, setWinnerMessage] = useState(null);
 
-
   useEffect(() => {
     if (!playerRef.current) {
       playerRef.current = new Peer();
@@ -215,13 +214,16 @@ export default function Player({ lobbyId, username }) {
   return (
     <div>
       <div>
-        <button className="absolute top-0 right-0 m-2" onClick={handleLeaveClick}>[Back Icon]</button>
+        <button
+          className="absolute top-0 right-0 m-2"
+          onClick={handleLeaveClick}
+        >
+          [Back Icon]
+        </button>
         {showReplay && (
-          <div className="popup2">
-            <button id="replay" onClick={replay}>
-              Replay game
-            </button>
-          </div>
+          <button id="replay" onClick={replay}>
+            Replay game
+          </button>
         )}
         {showPopup && (
           <div className="popup-overlay">
@@ -246,7 +248,9 @@ export default function Player({ lobbyId, username }) {
 
       <div className="flex flex-col md:flex-row h-screen">
         <div className="w-full md:w-1/4 p-4">
-          <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">Players in Lobby:</h3>
+          <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">
+            Players in Lobby:
+          </h3>
           <ul>
             {playerList.map((player) => (
               <li key={player.id}>Player {player.username}</li>
@@ -273,12 +277,12 @@ export default function Player({ lobbyId, username }) {
           <img id="game-gif" />
 
           {isGameStarted && (
-          <Game
-            gameEnd={gameEnd}
-            gameProgress={gameProgress}
-            progressList={progressList}
-            username={username}
-          />
+            <Game
+              gameEnd={gameEnd}
+              gameProgress={gameProgress}
+              progressList={progressList}
+              username={username}
+            />
           )}
         </div>
 
