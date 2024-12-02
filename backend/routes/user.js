@@ -14,7 +14,6 @@ function isAuthenticated(req, res, next) {
 // User signup route
 router.post("/signup", async (req, res) => {
   const { username, password } = req.body;
-  // TODO: Add password hashing, validation, etc.
 
   try {
     const usersCollection = await db.collection("users");
@@ -25,7 +24,6 @@ router.post("/signup", async (req, res) => {
         .status(409)
         .json({ message: `Username ${username} already exists` });
     }
-    // Generate salt and hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
