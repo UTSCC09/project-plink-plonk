@@ -52,13 +52,14 @@ export default function Webcam({ currentSign, changeSign }) {
   }
 
   return (
-    <div>
+    <div className="m-0">
       <video
         ref={webcamVideo}
         autoPlay
         width="240px"
         height="320px"
         onLoadedData={readSign}
+        className={isWebcamOn ? "rounded-lg border-4 border-[#46262d]" : ""}
       />
       <button onClick={toggleCam}>
         {isWebcamOn ? "Disable Webcam" : "Enable Webcam"}

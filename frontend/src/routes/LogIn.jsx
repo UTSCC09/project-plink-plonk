@@ -43,8 +43,8 @@ const Login = ({ onLogin }) => {
   
   return (
     <>
-    <form class="flex flex-col space-y-6" onSubmit={submit}>
-      <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
+    <h2 class="font-display text-4xl font-extrabold sm:text-5xl md:text-6xl xl:text-6.5xl">Login</h2>
+    <form class="flex flex-col space-y-6 justify-center" onSubmit={submit}>
       {error && <p>{error}</p>}
       <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
       <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />

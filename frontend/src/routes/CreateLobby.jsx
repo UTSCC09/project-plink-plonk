@@ -3,7 +3,8 @@ import { Form } from "react-router-dom";
 
 export default function CreateLobby() {
   return (
-    <Form method="post" action="/play" className="space-y-4">
+    <div className="flex justify-center">
+      <Form method="post" action="/play" className="space-y-4">
       <input
         type="text"
         id="code"
@@ -19,6 +20,7 @@ export default function CreateLobby() {
         <label htmlFor="public">Public</label>
       </div>
       <button type="submit" >Start Room</button>
-    </Form>
+      </Form>
+    </div>
   );
 }

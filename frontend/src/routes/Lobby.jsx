@@ -52,25 +52,28 @@ export default function Lobby({ hasWebcam = true }) {
   }
 
   return (
-    <div>
+    <div className="lobby-div">
 
-      <h2>Sign Sprinter</h2>
+      <h2 className="font-display text-4xl font-extrabold md:text-4xl xl:text-5xl mb-10">Sign Sprinter</h2>
 
       {/* Share */}
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h2 style={{ marginRight: "10px" }}>
-          Share LobbyID with friends: {lobbyId}
+      <div className="flex absolute top-0 left-0 m-2 text-lg">
+        <h2>
+          Share LobbyID with friends:
         </h2>
-        <img
-          src="/copy.png"
-          alt="Copy"
-          onClick={() => copyToClipboard(lobbyId)}
-          style={{
-            width: "24px",
-            height: "24px",
-            cursor: "pointer",
-          }}
-        />
+        <div className="">
+          <span>{lobbyId}</span>
+          <img
+            src="/copy.png"
+            alt="Copy"
+            onClick={() => copyToClipboard(lobbyId)}
+            style={{
+              width: "24px",
+              height: "24px",
+              cursor: "pointer",
+            }}
+          />
+        </div>
       </div>
 
       <div>

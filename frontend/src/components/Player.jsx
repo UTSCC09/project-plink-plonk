@@ -213,7 +213,7 @@ export default function Player({ lobbyId, username }) {
   return (
     <div>
       <div>
-        <button onClick={handleLeaveClick}>[Back Icon]</button>
+        <button className="absolute top-0 right-0 m-2" onClick={handleLeaveClick}>[Back Icon]</button>
         {showReplay && (
           <div className="popup2">
             <button id="replay" onClick={replay}>
@@ -242,9 +242,9 @@ export default function Player({ lobbyId, username }) {
         )}
       </div>
 
-      <div>
-        <div>
-          <h3>Players in Lobby:</h3>
+      <div className="flex flex-col md:flex-row h-screen">
+        <div className="bg-slate-500 w-full md:w-1/4 p-4">
+          <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">Players in Lobby:</h3>
           <ul>
             {playerList.map((player) => (
               <li key={player.id}>Player `{player.username}`</li>
@@ -252,7 +252,7 @@ export default function Player({ lobbyId, username }) {
           </ul>
         </div>
 
-        <div>
+        <div className="bg-slate-600 w-full md:w-1/2 p-4 flex flex-col">
           <div ref={gameText}>
             {generateProblemText(question) +
               `\nYou are currently signing ${currentSign}`}
@@ -265,28 +265,30 @@ export default function Player({ lobbyId, username }) {
             <div></div>
           )}
           <img id="game-gif" />
+
+          {isGameStarted && (
+          <Game
+            gameEnd={gameEnd}
+            gameProgress={gameProgress}
+            progressList={progressList}
+            username={username}
+          />
+          )}
         </div>
 
-        {isGameStarted && (
-          <div>
-            <Game
-              gameEnd={gameEnd}
-              gameProgress={gameProgress}
-              progressList={progressList}
-              username={username}
-            />
-          </div>
-        )}
-        <Webcam key={webcamKey} currentSign={currentSign} changeSign={setCurrentSign} />
-
-
         {/* <Chat /> bonus */}
-        <Chat
-          messages={messages}
-          inputMessage={inputMessage}
-          setInputMessage={setInputMessage}
-          sendMessage={sendMessage}
-        />
+        <div className="bg-slate-700 w-full h-full md:w-1/4 p-4">
+          <Chat
+            messages={messages}
+            inputMessage={inputMessage}
+            setInputMessage={setInputMessage}
+            sendMessage={sendMessage}
+          />
+        </div>
+
+        <div className="fixed bottom-0 left-0 m-4">
+          <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
+        </div>
       </div>
     </div>
   );

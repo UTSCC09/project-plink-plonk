@@ -95,7 +95,7 @@ function LoggedIn({ setNickname }) {
       <div>
         {!showNicknameInput ? (
           <button onClick={() => setShowNicknameInput(true)}>Click to Change Nickname</button>) : (
-          <div>
+          <div className="flex justify-center">
             <form onSubmit={handleChangeNickname}>
               <input
                 type="text"
@@ -103,6 +103,7 @@ function LoggedIn({ setNickname }) {
                 value={newNickname}
                 onChange={(e) => setNewNickname(e.target.value)}
                 required
+                className="mb-8"
               />
               <button type="submit">Change Nickname</button>
             </form>

@@ -266,9 +266,8 @@ export default function Host({ lobbyId, username }) {
 
     const gifElement = document.getElementById("game-gif");
     gifElement.style.display = "block"; // Make the GIF visible
-    gifElement.src = "/countdown.gif";
+    gifElement.src = "";
     setTimeout(() => {
-      gifElement.style.display = "block";
       gifElement.src = "/countdown.gif?" + new Date().getTime();
 
       setTimeout(() => {
@@ -413,7 +412,7 @@ export default function Host({ lobbyId, username }) {
   return (
     <div>
       <div>
-        <button onClick={handleLeaveClick}>Go Back</button>
+        <button className="absolute top-0 right-0 m-2" onClick={handleLeaveClick} >Go Back</button>
         {showReplay && (
           <div className="popup2">
             <button id="replay" onClick={replay}>
@@ -436,49 +435,53 @@ export default function Host({ lobbyId, username }) {
         )}
       </div>
 
-      <div>
-        <div>
-          <h3>Players in Lobby:</h3>
+      <div className="flex flex-col md:flex-row h-screen">
+        <div className="bg-slate-500 w-full md:w-1/4 p-4">
+          <h3 className="text-xl font-extrabold md:text-2xl xl:text-3lg">Players in Lobby:</h3>
           <ul>
             {playerList.map((player) => (
               <li key={player.id}>
-                Player `{player.username}` with ID: {player.id}
+                Player `{player.username}`
               </li>
             ))}
           </ul>
         </div>
 
-        <div>
+        <div className="bg-slate-600 w-full md:w-1/2 p-4 flex flex-col items-center">
           <div ref={gameText}>
             {generateProblemText(question) +
               `\nYou are currently signing ${currentSign}`}
             <img id="trophy-gif" />
           </div>
 
-          <button id="startButton" onClick={startGame}>
+          <button className="mt-4 w-64" id="startButton" onClick={startGame}>
             Start
           </button>
           <img id="game-gif" />
-        </div>
 
-        {isGameStarted && (
-          <div>
+          {isGameStarted && (
             <Game
               gameEnd={gameEnd}
               gameProgress={gameProgress}
               progressList={progressList}
               username={username}
             />
-          </div>
-        )}
-        <Webcam key={webcamKey} currentSign={currentSign} changeSign={setCurrentSign} />
+          )}
+        </div>
+        
+        {/* <Chat /> bonus */}
+        <div className="bg-slate-700 w-full h-full md:w-1/4 p-4">
+          <Chat
+            messages={messages}
+            inputMessage={inputMessage}
+            setInputMessage={setInputMessage}
+            sendMessage={sendMessage}
+          />
+        </div>
 
-        <Chat
-          messages={messages}
-          inputMessage={inputMessage}
-          setInputMessage={setInputMessage}
-          sendMessage={sendMessage}
-        />
+        <div className="fixed bottom-0 left-0 m-4">
+          <Webcam currentSign={currentSign} changeSign={setCurrentSign} />
+        </div>
 
       </div>
     </div>
