@@ -12,7 +12,7 @@ import Chat from "../components/Chat";
 import { generateProblemText, generateProblem } from "../js/problemBank.mjs";
 
 export default function Player({ lobbyId, username }) {
-  const RACE_LENGTH = 10; // PLACEHOLDER
+  let RACE_LENGTH = 9; // PLACEHOLDER
   // Guest player
   const playerRef = useRef(null);
   const playerId = useRef(null);
@@ -97,12 +97,13 @@ export default function Player({ lobbyId, username }) {
           setIsGameStarted(false);
           setMessages([]);
           setCurrentSign(null);
-          setGameProgress(0);
+          setGameProgress(-1);
           setQuestion(null);
           setShowReplay(false);
           setWebcamKey((prevKey) => prevKey + 1);
           setWinnerMessage(null);
           setStarted(false);
+          setGameEnd(10);
         } 
       });
     });
