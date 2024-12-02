@@ -50,10 +50,7 @@ export default function Host({ lobbyId, username }) {
       // Listen for incoming connections
       host.on("connection", (conn) => {
         conn.on("data", (data) => {
-          console.log("Data received by host:", data);
           if (data.type === "join-game") {
-            console.log("Player ready to start the game");
-
             setPlayerList((prevPlayerList) => {
               const isAlreadyInList = prevPlayerList.some(
                 (player) => player.id === conn.peer
@@ -214,9 +211,6 @@ export default function Host({ lobbyId, username }) {
   // Progresses game if sign on camera matches question
   useEffect(() => {
     if (question && currentSign && currentSign === question.label) {
-      console.log(
-        `Question is ${question.label}, sign is ${currentSign}, so we move`
-      );
       playGame();
     }
   }, [currentSign]);
@@ -300,9 +294,7 @@ export default function Host({ lobbyId, username }) {
         return newGameProgress;
     });
   
-  
-    console.log("Game progress is:", gameProgress);
-    if (gameProgress === gameEnd) {
+      if (gameProgress === gameEnd) {
       setWinnerMessage(`You won the game!`);
       const gifElement = document.getElementById("game-gif");
       gifElement.style.display = "block"; // Make the GIF visible

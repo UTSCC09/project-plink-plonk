@@ -66,7 +66,6 @@ export default function Player({ lobbyId, username }) {
           setPlayerList(data.playerList);
         } else if (data.type == "progress-update") {
           setProgressList(data.progressList);
-          console.log("received progress list is:", data.progressList);
         } else if (data.type == "start-game") {
           const gifElement = document.getElementById("game-gif");
           gifElement.style.display = "block"; // Make the GIF visible
@@ -104,9 +103,7 @@ export default function Player({ lobbyId, username }) {
           setWebcamKey((prevKey) => prevKey + 1);
           setWinnerMessage(null);
           setStarted(false);
-        } else {
-          console.log("Received message:", data);
-        }
+        } 
       });
     });
 
