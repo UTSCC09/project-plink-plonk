@@ -146,7 +146,9 @@ export default function Host({ lobbyId, username }) {
                 setShowReplay(true);
               }, 2500);
             }
-            setWinnerMessage(`Player ${data.username} won the game!`);
+            if(!winnerMessage){
+              setWinnerMessage(`Player ${data.username} won the game!`);
+            }
           } else if (data.type == "leaving") {
             setProgressList((prevProgressList) => {
               const updatedProgressList = prevProgressList.filter(
@@ -294,7 +296,9 @@ export default function Host({ lobbyId, username }) {
       });
   
       if (newGameProgress === gameEnd) {
-        setWinnerMessage(`You won the game!`);
+        if(!winnerMessage){
+          setWinnerMessage(`You won the game!!`);
+        }
         const gifElement = document.getElementById("game-gif");
         gifElement.style.display = "block"; // Make the GIF visible
         gifElement.src = "/trophy.gif";
