@@ -1,7 +1,7 @@
 import express, { application } from "express";
 import db from "../db/connection.js";
 import bcrypt from "bcrypt";
-import { parse, serialize } from "cookie";
+import { serialize } from "cookie";
 
 const router = express.Router();
 

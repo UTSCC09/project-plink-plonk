@@ -18,7 +18,7 @@ export default function Game({
             style={{ width: `${progress}%` }}
           />
         </div>
-        <span className="w-12 text-sm">{`${current}/${end}`}</span>
+        <span className="w-12 text-sm">{current > end ? `${end}/${end}` : `${current}/${end}`}</span>
       </div>
     );
   }

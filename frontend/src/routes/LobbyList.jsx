@@ -1,6 +1,6 @@
 import { getPublicLobbies } from "../js/lobby.mjs";
 import { useLoaderData, useRevalidator, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 export async function loader() {
   const lobbies = await getPublicLobbies();

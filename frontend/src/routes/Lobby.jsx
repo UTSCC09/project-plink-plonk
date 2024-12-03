@@ -1,4 +1,4 @@
-import { useParams, useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { getCookie, checkAuth } from "../js/authentication.mjs";
 
 import { redirect } from "react-router-dom";

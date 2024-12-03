@@ -1,12 +1,11 @@
 import express from 'express';
 import path from 'path';
-import { dirname } from "path";
 import cors from 'cors';
 import userRoutes from './routes/user.js';
 import lobbyRoutes from './routes/lobby.js';
 import googleRoutes from './routes/google.js';
 import session from "express-session";
-import { parse, serialize } from "cookie";
+import { parse } from "cookie";
 import passport from 'passport';
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);

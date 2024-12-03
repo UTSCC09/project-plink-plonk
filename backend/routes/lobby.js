@@ -1,6 +1,5 @@
 import express from "express";
 import db from "../db/connection.js";
-import session from "express-session";
 
 const router = express.Router();
 
