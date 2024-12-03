@@ -244,7 +244,6 @@ export default function Player({ lobbyId, username }) {
               : `${generateProblemText(
                   question
                 )}\nYou are currently signing ${currentSign}`}
-            <img id="trophy-gif" />
           </div>
 
           {!isGameStarted ? (
@@ -254,7 +253,6 @@ export default function Player({ lobbyId, username }) {
           )}
 
           <button className="invisible m-4 w-64"></button>
-          <img id="game-gif" />
 
           {isGameStarted && (
             <Game
@@ -264,6 +262,7 @@ export default function Player({ lobbyId, username }) {
               username={username}
             />
           )}
+          <img id="game-gif" />
         </div>
 
         {/* <Chat /> bonus */}

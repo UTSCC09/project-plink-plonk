@@ -425,13 +425,11 @@ export default function Host({ lobbyId, username }) {
               : `${generateProblemText(
                   question
                 )}\nYou are currently signing ${currentSign}`}
-            <img id="trophy-gif" />
           </div>
 
           <button className="mt-4 w-64" id="startButton" onClick={startGame}>
             Start
           </button>
-          <img id="game-gif" />
 
           {isGameStarted && (
             <Game
@@ -441,6 +439,7 @@ export default function Host({ lobbyId, username }) {
               username={username}
             />
           )}
+          <img id="game-gif" />
         </div>
 
         {/* <Chat /> bonus */}
