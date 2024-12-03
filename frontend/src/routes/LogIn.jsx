@@ -32,6 +32,10 @@ export default function LogIn() {
       setMessage('Login failed');
     }
   }
+
+  const handleGoogleLogin = async () => {
+    window.location.href = `${apiUrl}/api/google/login`;
+  };
   
   return (
     <>
@@ -58,7 +62,7 @@ export default function LogIn() {
         />
         <button type="submit" className="submitButton">Log In</button>
       </Form>
-      <Link to={`${apiUrl}/api/google/login`}>Log In with Google</Link>
+      <button class="font-semibold" onClick={handleGoogleLogin} className="button">Sign in with Google</button>
     </div>
     </>
   );
