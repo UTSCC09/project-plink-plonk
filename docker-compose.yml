@@ -1,17 +1,4 @@
 services:
-  # Nginx reverse proxy
-  # nginx-proxy:
-  #   image: jwilder/nginx-proxy
-  #   container_name: nginx-proxy
-  #   restart: always
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
-  #     - ./certs:/etc/nginx/certs
-  #     - ./vhost:/etc/nginx/vhost.d
-  #     - ./html:/usr/share/nginx/html
 
   # Frontend 
   frontend:
