@@ -79,9 +79,7 @@ export default function Player({ lobbyId, username }) {
         } else if (data.type == "message") {
           setMessages(data.messages);
         } else if (data.type == "player-won") {
-           if(!winnerMessage){
-              setWinnerMessage(`Player ${data.username} won the game!`);
-            }
+          setWinnerMessage(`Player ${data.username} won the game!`);
           setTimeout(() => {
             setShowReplay(true);
           }, 2800);
@@ -156,9 +154,7 @@ export default function Player({ lobbyId, username }) {
   
       // Handle game end and send player-won if progress equals gameEnd
       if (newGameProgress === gameEnd) {
-        if(!winnerMessage){
-          setWinnerMessage(`You won the game!!`);
-        }
+        setWinnerMessage(`You won the game!`);
         const gifElement = document.getElementById("game-gif");
         gifElement.style.display = "block"; // Make the GIF visible
         gifElement.src = "/trophy.gif";
