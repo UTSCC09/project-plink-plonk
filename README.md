@@ -1,6 +1,6 @@
 Plink Plonk presents Sign Sprinter!
 
-Play here: https://signsprinters.duckdns.org/
+## **Play here: https://signsprinters.duckdns.org/ **
 
 A multiplayer sign language game where players race against each other to complete random sign language challenges as quickly as possible.
 
