@@ -2,7 +2,7 @@ Plink Plonk presents Sign Sprinter!
 
 ## **Play here: https://signsprinters.duckdns.org/ **
 
-###What + How to play:
+### What + How to play:
 A multiplayer sign language game where players race against each other to complete random sign language challenges as quickly as possible.
 
 The game includes a login and signup system, supporting both traditional email authentication and Google OAuth.
